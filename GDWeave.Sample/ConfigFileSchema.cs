@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace MyModName;
+namespace ChalkPlusPlus;
 
 /// <summary>
 /// This class defines the shape of and default values for your mod's JSON config.
@@ -16,5 +16,7 @@ namespace MyModName;
 public class ConfigFileSchema
 {
 	[JsonInclude]
-	public bool infiniteChatRange = false;
+	public bool instantFill = false;
+	[JsonInclude]
+	public int modeSelectKey = 89;
 }

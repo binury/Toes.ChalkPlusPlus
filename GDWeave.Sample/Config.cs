@@ -1,9 +1,7 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MyModName;
+﻿namespace ChalkPlusPlus;
 
 public class Config(ConfigFileSchema configFile)
 {
-	[JsonInclude]
-	public bool infiniteChatRange = configFile.infiniteChatRange;
+	public bool instantFill = configFile.instantFill;
+	public int modeSelectKey = configFile.modeSelectKey;
 }

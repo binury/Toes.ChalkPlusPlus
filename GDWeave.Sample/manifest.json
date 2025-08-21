@@ -1,11 +1,17 @@
 {
-  "Id": "Toes.MyModName",
-  "AssemblyPath": "MyModName.dll",
+  "Id": "Toes.ChalkPlusPlus",
+  "AssemblyPath": "Chalk++.dll",
+  "PackagePath": "Chalk++.pck",
+  "Dependencies": [
+    "BlueberryWolfi.APIs",
+    "Tacklebox",
+    "Toes.Socks"
+  ],
   "Metadata": {
-    "Name": "The Coolest Latest Mod Without a Name Yet",
+    "Name": "Chalk++",
     "Author": "Toes",
-    "Version": "0.0.1",
-    "Description": "[This description is shown in some mod managers and might also be used in-game in Mod Settings menu]",
-    "Homepage": "https://ko-fi.com/toooes"
+    "Version": "1.0.0",
+    "Description": "A collection of handy tools for chalk artists",
+    "Homepage": "https://github.com/binury/Toes.ChalkPlusPlus"
   }
 }

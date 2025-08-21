@@ -1,15 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>MyModName</RootNamespace>
+    <RootNamespace>ChalkPlusPlus</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblySearchPaths>$(AssemblySearchPaths);$(GDWeavePath)/core;C:/Program Files (x86)/Steam/steamapps/common/WEBFISHING/GDWeave/core</AssemblySearchPaths>
-    <AssemblyName>MyModName</AssemblyName>
-    <Version>0.0.1</Version>
+    <AssemblyName>Chalk++</AssemblyName>
+    <Version>1.0.0</Version>
     <Authors>Toes</Authors>
-    <Company>Toes</Company>
+    <Company>Toes d/b/a Fuck Off PP Inc.</Company>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <IncludeSymbols>False</IncludeSymbols>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Copyright>Copyright (c) 2025 binury</Copyright>
+    <PackageProjectUrl>https://github.com/binury/Toes.ChalkPlusPlus</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>git@github.com:binury/Toes.ChalkPlusPlus.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>Chalk++ by Toes</Description>
+    <Title>Chalk++ by Toes</Title>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>ChalkPlusPlus</PackageId>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
 
     <ItemGroup>
         <Reference Include="GDWeave" Private="false" />
@@ -17,6 +36,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\gdscripts\icon.png">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+        </None>
         <None Include="manifest.json" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
