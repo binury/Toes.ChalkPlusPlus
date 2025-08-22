@@ -1,10 +1,10 @@
 {
   "Id": "Toes.ChalkPlusPlus",
   "AssemblyPath": "Chalk++.dll",
-  "PackagePath": "Chalk++.pck",
+  "PackPath": "Chalk++.pck",
   "Dependencies": [
     "BlueberryWolfi.APIs",
-    "Tacklebox",
+    "TackleBox",
     "Toes.Socks"
   ],
   "Metadata": {
