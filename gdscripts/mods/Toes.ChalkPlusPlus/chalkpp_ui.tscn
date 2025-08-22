@@ -1,0 +1,84 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://mods/Toes.ChalkPlusPlus/chalkpp_ui_theme.tres" type="Theme" id=1]
+[ext_resource path="res://mods/Toes.ChalkPlusPlus/chalkpp_ui.gd" type="Script" id=2]
+
+[node name="Chalk++ UI" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="Info" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 1539.0
+margin_top = 754.0
+margin_right = 4.0
+margin_bottom = -196.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource( 1 )
+
+[node name="Panel" type="PanelContainer" parent="Info"]
+anchor_right = 0.8
+anchor_bottom = 0.8
+margin_right = 92.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 400, 130 )
+rect_scale = Vector2( 0.85, 0.85 )
+mouse_filter = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Info/Panel"]
+margin_right = 400.0
+margin_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 130 )
+hint_tooltip = "(Unused) Press your Chalk++ cycling hotkey to cycle modes
+Hold <alt> while scrolling to select a masking color OR
+Hold <alt> while clicking on a canvas cell to choose that color"
+mouse_filter = 2
+mouse_default_cursor_shape = 16
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.33
+theme = ExtResource( 1 )
+alignment = 1
+
+[node name="Header" type="RichTextLabel" parent="Info/Panel/VBoxContainer"]
+margin_top = 11.0
+margin_right = 400.0
+margin_bottom = 45.0
+bbcode_enabled = true
+bbcode_text = "[center][color=#ff005d][u][b][i]Chalk++[/i][/b][/u][/color][/center]"
+text = "Chalk++"
+fit_content_height = true
+
+[node name="Title" type="RichTextLabel" parent="Info/Panel/VBoxContainer"]
+margin_top = 48.0
+margin_right = 400.0
+margin_bottom = 82.0
+rect_clip_content = false
+size_flags_horizontal = 3
+size_flags_vertical = 0
+bbcode_enabled = true
+bbcode_text = " Checkerboard Brush"
+text = " Checkerboard Brush"
+fit_content_height = true
+
+[node name="Details" type="RichTextLabel" parent="Info/Panel/VBoxContainer"]
+margin_top = 85.0
+margin_right = 400.0
+margin_bottom = 119.0
+size_flags_vertical = 0
+bbcode_enabled = true
+bbcode_text = " Masking color: alpha"
+text = " Masking color: alpha"
+fit_content_height = true
+__meta__ = {
+"_editor_description_": "Container"
+}

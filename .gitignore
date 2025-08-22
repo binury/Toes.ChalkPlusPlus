@@ -5,3 +5,6 @@
 
 bin/
 obj/
+gdscripts/Chalk++.pck
+*.otf
+*.zip
