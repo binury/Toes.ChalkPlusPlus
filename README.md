@@ -1,134 +1,99 @@
-# (Better) Webfishing Mod Template
+# Chalk++
 
-A (better) example of [GDWeave](https://github.com/NotNite/GDWeave) Webfishing mods.
+<img src="https://i.imgur.com/8TRBtmH.jpeg" width=1024 alt="Chalk++ Banner Image">
+<br>
+<a href="https://cara.app/purame"><small>art by Ame</small></a>
 
-## Project and GDWeave patching overview
+## Installation
+***Make sure you don't have an older version of Chalk++ installed at the same time!***
 
-This repository is a developer-friendly replacement for the _old_ vanilla one that Nite
-threw together for GDWeave, which has no actual patches being applied in the example and
-is entirely devoid of documentation.
+Manually unzip in your GDWeave directory to install
 
-I know it's a bit sparse for now; I'll try to document this section more thoroughly in time!
+Or import this zip as a local mod through R2MM etc.
 
-## TokenBuilders, PatternFactories, and SnippetBuilders, Oh My!
+## Usage
 
-This project includes an abstraction layer for working with
-GDWeave's Tokens, written primarily by [Teemaw](https://teemaw.dev) but _until now_
-never exported and made available for reuse in other projects. Without this, mods/patches
-need to be written in tedium, an error-prone and monotonous way:
+`Y` is the default hotkey and is changeable
 
-```cs
-{
-    internal class PlayerScriptMod : IScriptMod
-    {
-        public bool ShouldRun(string path) => path == "res://Scenes/Entities/Player/player.gdc";
-        public IEnumerable<Token> Modify(string path, IEnumerable<Token> tokens)
-        {
-            // scale = clamp(animation_data["player_scale"], 0.6, 1.4) * Vector3.ONE
-            var clampMatcher = new MultiTokenWaiter([
-                t => t is IdentifierToken { Name: "scale" },
-                t => t.Type is TokenType.OpAssign,
-                t => t.Type is TokenType.BuiltInFunc, // clamp
-                t => t.Type is TokenType.ParenthesisOpen,
-                t => t is IdentifierToken { Name: "animation_data" },
-                t => t.Type is TokenType.BracketOpen,
-                t => t.Type is TokenType.Constant, // player_scale
-                t => t.Type is TokenType.BracketClose,
-                t => t.Type is TokenType.Comma,
-                t => t.Type is TokenType.Constant, // 0.6
-            ], allowPartialMatch: false);
-            foreach (var token in tokens)
-            {
-                if (clampMatcher.Check(token))
-                {
-                    // -2.0, 10.0
-                    yield return new ConstantToken(new RealVariant(-2.0));
-                    yield return new Token(TokenType.Comma);
-                    yield return new ConstantToken(new RealVariant(10.0));
-                }
-                // [...]
-                else
-                {
-                    // return the original token
-                    yield return token;
-                }
-            }
-        }
-    }
-}
-```
+### Modes
+- Checkerboard (Half) dithering
+- Dotted (1/9th) dithering
+- Masking (freehand drawing)
+- Fill
 
-Instead this mod could be rewritten with as:
-```cs
-mi.RegisterScriptMod(
-			new TransformationRuleScriptModBuilder()
-				.ForMod(psmod)
-				.Named("Clamp")
-				.Patching("res://Scenes/Entities/Player/player.gdc")
-				.AddRule(
-					new TransformationRuleBuilder()
-						.Named("Expand clamp range")
-						.Do(Operation.Append)
-						.Matching(
-							TransformationPatternFactory.CreateGdSnippetPattern(
-								"""
-								scale = clamp(animation_data["player_scale"],
-								"""
-							)
-						)
-						.With("-2.0, 10.0")
-                    )
-                // [...]
-				.Build()
-		)
-```
+### Controls
+0. Equip a chalk to activate Chalk++
 
-## Examples in this project
+1. Press `Y` cycle modes, hold down `<shift>` + `Y` to cycle backwards
 
-I tried to include _many_ example patches in a variety of styles to showcase as much as I could without potentially overwhelming
-the reader. For what it's worth, a typical mod might never get this large so don't feel like you've done something wrong if your mod
-file ends up being only 50 or so lines-- that's totally normal!
+2. You can hold down `<SHIFT>` **while using checkerboard pattern** to offset the cells targeted by  -- It's hard to explain but you'll see what I mean.
+
+3. **you can mask while using dithering brushes, by holding `<CTRL>`**
 
 
-## Building
+4. In addition to alpha masking you can select a specific masking color by holding `<ALT>` and scrolling your mouse wheel-- any chalk that you draw outside of this color will be discarded
 
-To build the project, you need to set the GDWeavePath environment variable to your game install's GDWeave directory
-(e.g. G:\games\steam\steamapps\common\WEBFISHING\GDWeave).
-This can also be done in Rider with File | Settings | Build, Execution, Deployment | Toolset and Build | MSBuild global properties.
-You can also achieve this with a .user file, in Visual Studio.
+5.  While holding down `<ALT>`  click on a canvas cell to select the color of the cell as your masking color
 
-## Testing the DLL
-
-> [!WARNING]
-> If you run into snags at runtime with error messages about unknown identifiers which are names of built-in functions (such as `randf` or `clamp`)
-please [file an issue](https://github.com/binury/Toes.Tuner/issues) and let me know so I can add the missing token to the list!
-
-> [!TIP]
-> I recommend using R2ModManager to manage your mod profiles, and that you create a separate `TEST` profile that only includes your mod
-and its dependencies (if any).
-
-After you've built your project you can copy over the manifest file along with the dll into a new folder within your mods directory.
-I have [included a script](./webfishing-debugging-mode.bat) you can use to launch the game with GDWeave's console open. 
-
-> [!IMPORTANT]
-> You won't see as much as you'd expect in the GDWeave log while testing/troubleshooting. You should set your system's environment variables to include 
-`GDWEAVE_DEBUG` and `GDWEAVE_CONSOLE`, and set their values as 1. When you're done
-testing and ready to play the game as usual, you can delete these env vars.
-***Or***, use the [included script](./webfishing-debugging-mode.bat) 
+6. To fill, equip the chalk/color you'd like to apply, select `fill` mode from the menu, and click on the color/area you wish to fill
 
 
-## Other examples to reference
-- [BetterLocalChat](https://github.com/binury/Toes.BetterLocalChat)
-- [Calico](https://github.com/tma02/calico/tree/main)
-- Submit a PR if you know of a good project to add here!
+## Known Issues
+
+- ~~Filling a blank canvas or empty area will fill the entire canvas, including the visually out-of-bounds surrounding grass area~~
+- Filling is not possible on the canvas near the aquarium due to technical limitations, for now
+
+## Roadmap
+
+1. Redo / Undo changes | Ctrl+z
+2. Automatic canvas snapshotting and restoration feature
+3. UI Enhancement - Controls
+4. Canvas clear/wipe button
+5. ??? | Your idea here? DM me
 
 
+## Changelog
 
-## Publishing your finished mod
+### *v1.0.0*
+- Now requires [Tacklebox](https://thunderstore.io/c/webfishing/p/PuppyGirl/TackleBox/) as a dependency
+to manage hotkeys (since BlueberryWolfi's APIs haven't been updated in nearly a year and are *dysfunctional*-
+not actually saving any of the player's keybind changes.
+Somebody should make a better Webfishing API ...🤔)
+- Minor changes/fixes
+- Code overhaul
 
-For convenience you can checkout and use [included Powershell script](./publish.ps1). Otherwise, manually download another mod and take a look at the structure of the zip file.
-Once it's ready, you can [upload your mod to Thunderstore](https://thunderstore.io/c/webfishing/create/).
+### v0.2.0 - UI Hotfix, Typeface change
+- Hotfixed dangling UI dependency causing issues for some players
+- Added cute font typeface for Chalk++ UI
 
-## I ran into some snags and I'd really appreciate some help!
-> [!TIP]
-> You can [reach out to me](https://ko-fi.com/c/993813af6b) for help with building your mod project.
+### v0.1.0 - UI
+- Added basic UI/HUD overlay for keeping track of mode selection and mask picking
+
+### v0.0.12 - Performance and Quirk Fixes
+- ***Now requires [Socks 0.4.0](https://thunderstore.io/c/webfishing/p/toes/Socks/versions/) - be sure to update that!***
+- Fixed Alt-tabbing while drawing - will no longer continue drawing as if your mouse is still held-down (Vanilla bug)
+- Performance improvements!
+- Your mode, masking color, etc. *now consistently reset to default between different lobbies*
+- Mostly unseen/internal code refactoring
+
+### v0.0.11 - No-More-Stamps Mod Circumvention/Fix
+- Large canvas fills are now batched when larger than 1000 cells in order to prevent tripping Stamp-mod detection (this would be extremely rare)
+
+### v0.0.10 - Minor control enhancements
+- You can now pick a masking color from a cell (`<alt>` clicking) while in _any_ mode, not just masking
+- If you press `<shift>` in combination with your cycle-mode hotkey, it will cycle backwards instead of forwards
+
+### v0.0.7 - Misc. Fixes and Cleanup
+#### NOTE: You may need to rebind your hotkey, once!
+- (FIX) Filling a blank canvas should now constrain pretty close to the canvas's circular shape rather than the entire square canvas
+- Many misc. UI cleanup changes
+
+### v0.0.6 - Fill feature
+- (NEW FEAT) Color filling ("Paint bucket fill")
+
+### v0.0.5 - Masking UX Improvements and fixes
+
+- (NEW FEAT) Masking color picker: While in masking mode, hold down `<ALT>` and click on a canvas cell to select
+the color of the sell as the new masking color!
+- (FIX) You should no longer make accidental chalk marks unintentionally when using your inventory screen
+- (CHANGE) Masking selections _should_ no longer reset when changing chalks
