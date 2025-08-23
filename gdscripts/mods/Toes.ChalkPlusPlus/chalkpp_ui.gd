@@ -31,7 +31,7 @@ func _ready():
 	main.ChalkPP.connect("changed_mask", self, "change_mask")
 #	while title == null and details == null:
 #		yield(get_tree(), "idle_frame")
-	title.bbcode_text = " Chalk++ Off"
+	title.bbcode_text = ""
 	details.bbcode_text = " Mask: [b]Alpha[/b]"
 	self.visible = false
 
@@ -46,8 +46,6 @@ func make_visible():
 
 func change_mode(mode: int) -> void:
 	self.visible = not (mode == MODES.NONE)
-	for i in range(3):
-		yield(get_tree(), "idle_frame")
 	title.bbcode_text = " [i]%s[/i]" % MODE_NAMES[mode]
 
 
