@@ -53,6 +53,12 @@ Or import this zip as a local mod through R2MM etc.
 
 ## Changelog
 
+### v1.1.0 - Fixes galore
+- UI Overlay style refinement
+- Fixed eraser being blocked by Chalk++
+- Fixed large fills not propagating to peers (and therefore not persisting)
+    - This shouldn't happen but please report if you are auto-kicked by an anti-Stamps mod for filling
+
 ### v1.0.2
 - Hotfixed white chalk not working
 
