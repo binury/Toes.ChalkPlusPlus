@@ -45,6 +45,7 @@ var mouse_pos: Vector3
 var last_grid_pos: Vector2
 
 const CHALK_ITEMS := {
+	"chalk_eraser": COLORS.NONE,
 	"chalk_white": COLORS.WHITE,
 	"chalk_black": COLORS.BLACK,
 	"chalk_red": COLORS.RED,
@@ -157,19 +158,15 @@ func _process(delta):
 	if not paint_node:
 		return
 
-	activate_cpp(current_mode != MODES.NONE)
-	if current_mode == MODES.NONE:
-		return
-
 	mouse_pos = paint_node.global_transform.origin
 	set_canvas(find_canvas_id(mouse_pos))
 	if not chalk_canvas_node:
 		return
 
-	if get_held_chalk_color() == null:
-		return
-
-	apply_chalkpp()
+	var held_chalk_color = get_held_chalk_color()
+	activate_cpp(current_mode != MODES.NONE and held_chalk_color > -1)
+	if chalk_canvas_node.paused:
+		apply_chalkpp()
 
 
 func activate_cpp(active: bool) -> void:
