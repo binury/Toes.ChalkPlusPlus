@@ -51,7 +51,7 @@ custom_constants/separation = 0
 alignment = 1
 
 [node name="Header" type="RichTextLabel" parent="Info/Panel/VBoxContainer"]
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 400.0
 margin_bottom = 46.0
 bbcode_enabled = true
@@ -60,7 +60,7 @@ text = "Chalk++"
 fit_content_height = true
 
 [node name="Title" type="RichTextLabel" parent="Info/Panel/VBoxContainer"]
-margin_top = 45.0
+margin_top = 46.0
 margin_right = 400.0
 margin_bottom = 84.0
 rect_clip_content = false

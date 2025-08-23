@@ -18,13 +18,14 @@ onready var main = $"/root/ToesChalkPlusPlus"
 
 onready var PlayerAPI = get_node("/root/ToesSocks/Players")
 
-const Chalk := preload('res://mods/Toes.ChalkPlusPlus/controls.gd')
+const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
 const COLORS := Chalk.COLORS
 const COLOR_NAMES := Chalk.COLOR_NAMES
 const MODES := Chalk.MODES
 const MODE_NAMES := Chalk.MODE_NAMES
 const MASKS := Chalk.masks
 const MASK_NAMES := Chalk.mask_names
+
 
 func _ready():
 	main.ChalkPP.connect("changed_mode", self, "change_mode")
@@ -34,6 +35,7 @@ func _ready():
 	title.bbcode_text = ""
 	details.bbcode_text = " Mask: [b]Alpha[/b]"
 	self.visible = false
+
 
 func _process(_d):
 	if PlayerAPI.in_game == false:
@@ -59,4 +61,7 @@ func change_mask(mask: int) -> void:
 	elif mask_color == COLORS.NONE:
 		details.bbcode_text = " Mask: [i]Alpha[/i]"
 	else:
-		details.bbcode_text = "[color=%s] Mask: [i]%s[/i][/color]" % [mask_color_name, mask_color_name]
+		details.bbcode_text = (
+			"[color=%s] Mask: [i]%s[/i][/color]"
+			% [mask_color_name, mask_color_name]
+		)
