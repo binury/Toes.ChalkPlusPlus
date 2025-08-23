@@ -172,6 +172,7 @@ func _process(delta):
 func activate_cpp(active: bool) -> void:
 	for chalk in chalk_canvasses:
 		chalk.paused = active
+	_set_spawn_prop_visibility(!active)
 
 
 func get_held_chalk() -> String:
@@ -464,17 +465,32 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 	)
 
 # TODO: Mod conflicts with Calico/Awwptomize?
-#func _set_spawn_prop_visibility(visible: bool):
-#		var big_tree := get_node("/root/world/Viewport/main/map/main_map/zones/main_zone/trees/tree_a/big_tree")
-#		big_tree.visible = visible
-#		var big_tree_collision := big_tree.get_child(1).get_child(0)
-#		big_tree_collision.disabled = !visible
-#		for bench_num in [2,3,4]:
-#			var bench := get_node("/root/world/Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
-#			var bench_children := bench.get_children()
-#			var bench_body := bench.get_child(1)
-#			bench_body.visible = visible
-#			for collision in bench_body.get_children():
-#				collision.disabled = !visible
-#			bench.visible = visible
-#		return
+func _set_spawn_prop_visibility(visible: bool) -> void:
+	if chalk_canvas_id != 0 or chalk_canvas_node == null:
+		return
+	var scene = get_tree().current_scene
+	var big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/tree_a/big_tree")
+#	if big_tree == null:
+#		big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/@@1698")
+	if big_tree == null:
+		# TODO
+		# This will happen due sometimes due to Calico if config.MeshGpuInstancingEnabled = true
+		# https://github.com/tma02/calico/blob/46f46722d3bdcf7f8f5da96861894e9abcefc766/Teemaw.Calico/ScriptMod/MainMapScriptModFactory.cs#L31
+		return
+	big_tree.visible = visible
+	var big_tree_collision = big_tree.get_child(1).get_child(0)
+	big_tree_collision.disabled = !visible
+	for bench_num in [2,3,4]:
+		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
+		if bench == null:
+			Chat.notify("[CHALK++] Where the fuck is the bench %s???" % bench_num)
+			return
+		var bench_children = bench.get_children()
+		var bench_body = bench.get_child(1)
+#		if bench_body == null:
+#			bench_body = bench.get_child(0)
+		bench_body.visible = visible
+		for collision in bench_body.get_children():
+			collision.disabled = !visible
+		bench.visible = visible
+	return
