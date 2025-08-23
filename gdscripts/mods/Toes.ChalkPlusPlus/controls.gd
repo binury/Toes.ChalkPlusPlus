@@ -343,7 +343,7 @@ func apply_chalkpp():
 	last_grid_pos = new_grid_pos
 
 
-func checkerboard_brush(transformations):
+func checkerboard_brush(transformations, offset = shift_is_held):
 	var result := []
 	for entry in transformations:
 		var x = entry[0]
@@ -352,7 +352,7 @@ func checkerboard_brush(transformations):
 			var current_cell_color = TileMap_node.get_cell(x, y)
 			if current_cell_color != masking_color:
 				continue
-		if ((x + y) + (1 if shift_is_held else 0)) % 2 == 0:
+		if ((x + y) + (1 if offset else 0)) % 2 == 0:
 			result.append(entry)
 	return result
 
