@@ -40,7 +40,6 @@ func _ready():
 	KeybindsAPI.connect("_keybind_changed", self, "_on_keybind_changed")
 
 
-
 func _cycle_pattern():
 	emit_signal("cycle_chalk_mode")
 
@@ -56,7 +55,6 @@ func _on_ingame():
 	get_tree().root.add_child(ChalkPP_UI)
 
 
-
 func init_config() -> void:
 	var saved_config = TackleBox.get_mod_config(MOD_ID)
 	if not saved_config:
@@ -68,9 +66,9 @@ func init_config() -> void:
 	save_config()
 
 
-
 func save_config() -> void:
 	TackleBox.set_mod_config(MOD_ID, config)
+
 
 func init_keybind() -> void:
 	if KeybindsAPI.is_connected(CYCLE_ACTION_NAME + "_up", self, "_cycle_pattern"):
@@ -85,11 +83,8 @@ func init_keybind() -> void:
 	KeybindsAPI.connect(CYCLE_ACTION_NAME + "_up", self, "_cycle_pattern")
 
 
-
 func _on_keybind_changed(action_name: String, title: String, event: InputEvent) -> void:
 	if not (action_name == CYCLE_ACTION_NAME and event is InputEventKey):
 		return
 	config.modeSelectKey = event.scancode
 	save_config()
-
-

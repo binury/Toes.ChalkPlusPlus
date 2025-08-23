@@ -457,7 +457,7 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 				2,
 				Network.CHANNELS.CHALK
 			)
-			canvasData.clear()
+			call_deferred("clear", canvasData)
 
 	Network._send_P2P_Packet(
 		{"type": "chalk_packet", "data": canvasData, "canvas_id": canvasActorID},
