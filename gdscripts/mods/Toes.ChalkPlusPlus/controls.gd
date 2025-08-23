@@ -165,7 +165,7 @@ func _process(delta):
 	if not chalk_canvas_node:
 		return
 
-	if not get_held_chalk_color():
+	if get_held_chalk_color() == null:
 		return
 
 	apply_chalkpp()
@@ -183,7 +183,7 @@ func get_held_chalk() -> String:
 
 func get_held_chalk_color() -> String:
 	var chalk := get_held_chalk()
-	return CHALK_ITEMS[chalk] if chalk else null
+	return CHALK_ITEMS[chalk] if chalk != null else null
 
 
 func cycle_chalk_mode() -> void:
