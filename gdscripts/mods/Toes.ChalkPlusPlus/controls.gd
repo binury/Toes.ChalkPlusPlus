@@ -409,8 +409,8 @@ func paint_bucket(start_x: int, start_y: int, new_color: int) -> Array:
 		return transformations
 	if chalk_canvasses[1] == chalk_canvas_node:
 		# TODO: Throttle this
-		_notify(
-			"Due to game limitations outside our control, the fill tool does not currently work on this chalk canvas, sorry!"
+		Chat.notify(
+			"[Chalk++] Due to game limitations outside our control, the fill tool does not currently work on this chalk canvas, sorry!"
 		)
 		return transformations
 
