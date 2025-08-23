@@ -4,6 +4,10 @@
 <br>
 <a href="https://cara.app/purame"><small>art by Ame</small></a>
 
+<br/>
+
+<img src="https://i.imgur.com/Grs6byr.png" height=128>
+
 ## Installation
 ***Make sure you don't have an older version of Chalk++ installed at the same time!***
 
@@ -13,13 +17,18 @@ Or import this zip as a local mod through R2MM etc.
 
 ## Usage
 
-`Y` is the default hotkey and is changeable
+`Y` is the default hotkey and is changeable. While using Chalk++,
+the trees and benches on cavasses are made invisible and intangible. 
+
+
 
 ### Modes
 - Checkerboard (Half) dithering
 - Dotted (1/9th) dithering
 - Masking (freehand drawing)
 - Fill
+
+
 
 ### Controls
 0. Equip a chalk to activate Chalk++
@@ -30,14 +39,15 @@ Or import this zip as a local mod through R2MM etc.
 
 3. **you can mask while using dithering brushes, by holding `<CTRL>`**
 
-
 4. In addition to alpha masking you can select a specific masking color by holding `<ALT>` and scrolling your mouse wheel-- any chalk that you draw outside of this color will be discarded
 
 5.  While holding down `<ALT>`  click on a canvas cell to select the color of the cell as your masking color
 
 6. To fill, equip the chalk/color you'd like to apply, select `fill` mode from the menu, and click on the color/area you wish to fill
 
-### Options
+
+
+## Options
 
 Chalk++ options can be changed in-game using the Tacklebox UI in settings
 or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
@@ -46,21 +56,24 @@ or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
 Changing this to `false` will allow you to use the eraser while in any mode.
 Setting this to `true` allows you to use the eraser as a chalk with Chalk++ features.
 
+## Project
+### [Contributing - pull requests welcomed](https://github.com/binury/Toes.ChalkPlusPlus/pulls)
+### [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
 
-## [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
+### [Report an issue / Feedback](https://discord.gg/kjf3FCAMDb)
 
-## [Report an issue / Feedback](https://discord.gg/kjf3FCAMDb)
-
-## Roadmap
-
-1. Redo / Undo changes | Ctrl+z
-2. Automatic canvas snapshotting and restoration feature
-3. UI Enhancement - Controls
-4. Canvas clear/wipe button
-5. ??? | Your idea here? DM me
+### [Roadmap and feature requests](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
 
 
 ## Changelog
+
+### v1.2.0 - Eraser++
+- Eraser now behaves by default _just like a chalk_. See [options](#options)
+for more details and how to toggle this feature on/off.
+- While using Chalk++, benches and trees on canvasses will be hidden.
+    - If using Calico, a [small config change](https://github.com/binury/Toes.ChalkPlusPlus/issues/7) is needed in order for this to work, for now.
+- Restored warning when attempting to fill the incompatible aquarium canvas.
+
 
 ### v1.1.0 - Fixes galore
 - UI Overlay style refinement

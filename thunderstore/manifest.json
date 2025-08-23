@@ -1,8 +1,8 @@
 {
   "name": "Chalk_PlusPlus",
-  "version_number": "1.1.0",
+  "version_number": "1.2.0",
   "website_url": "https://github.com/binury/Toes.ChalkPlusPlus",
   "author": "Toes",
-  "description": "A collection of handy tools for chalk artists - dither brushes, masking, color filling",
+  "description": "A collection of handy tools for chalk artists - dither brushes, masking, color filling, and more!",
   "dependencies": ["PuppyGirl-TackleBox-0.5.2", "BlueberryWolfi-BlueberryWolfiAPIs-1.0.2", "toes-Socks-0.4.0"]
 }
