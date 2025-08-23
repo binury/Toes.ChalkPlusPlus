@@ -37,6 +37,15 @@ Or import this zip as a local mod through R2MM etc.
 
 6. To fill, equip the chalk/color you'd like to apply, select `fill` mode from the menu, and click on the color/area you wish to fill
 
+### Options
+
+Chalk++ options can be changed in-game using the Tacklebox UI in settings
+or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
+
+- `useEraserAsChalk` (Default: `true`): whether or not holding eraser should be considered the same as holding a chalk. I.e., a 'brown chalk'.
+Changing this to `false` will allow you to use the eraser while in any mode.
+Setting this to `true` allows you to use the eraser as a chalk with Chalk++ features.
+
 
 ## [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
 

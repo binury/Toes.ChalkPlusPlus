@@ -44,6 +44,9 @@ var current_zone := "main_zone"
 var mouse_pos: Vector3
 var last_grid_pos: Vector2
 
+## Whether or not holding eraser should count the same as a chalk
+var should_use_eraser_as_chalk := true
+
 const CHALK_ITEMS := {
 	"chalk_eraser": COLORS.NONE,
 	"chalk_white": COLORS.WHITE,
@@ -94,6 +97,7 @@ func _ready():
 	Players.connect("ingame", self, "_on_ingame")
 	Players.connect("outgame", self, "_on_outgame")
 	self.set_process_unhandled_input(true)
+	should_use_eraser_as_chalk = main.config["useEraserAsChalk"]
 
 
 func _input(event: InputEvent):
@@ -164,7 +168,7 @@ func _process(delta):
 		return
 
 	var held_chalk_color = get_held_chalk_color()
-	activate_cpp(current_mode != MODES.NONE and held_chalk_color > -1)
+	activate_cpp(current_mode != MODES.NONE and (held_chalk_color > -1 or should_use_eraser_as_chalk))
 	if chalk_canvas_node.paused:
 		apply_chalkpp()
 
