@@ -133,9 +133,10 @@ func _on_ingame() -> void:
 
 
 func _on_outgame() -> void:
-	current_mode = MODES.NONE
-	chalk_canvas_id = -1
+	chalk_canvasses.clear()
+	set_canvas(-1)
 	last_grid_pos = Vector2.INF
+	current_mode = MODES.NONE
 	set_mask_color(COLORS.NONE)
 
 
@@ -256,14 +257,18 @@ func get_canvasses() -> Array:
 
 
 func set_canvas(canvas_id: int) -> void:
-	if not canvas_id in range(4):
-		return  # Ignore -1
-	var canvasses := get_canvasses() if chalk_canvasses.empty() else chalk_canvasses
-	if canvasses[canvas_id]:
-		chalk_canvas_node = canvasses[canvas_id]
-		chalk_canvas_id = canvas_id
-		TileMap_node = chalk_canvas_node.get_node("Viewport/TileMap")
-		GridMap_node = chalk_canvas_node.get_node("GridMap")
+	if canvas_id in range(4):
+		var canvasses := get_canvasses() if chalk_canvasses.empty() else chalk_canvasses
+		if canvasses[canvas_id]:
+			chalk_canvas_node = canvasses[canvas_id]
+			chalk_canvas_id = canvas_id
+			TileMap_node = chalk_canvas_node.get_node("Viewport/TileMap")
+			GridMap_node = chalk_canvas_node.get_node("GridMap")
+	else:
+		chalk_canvas_id = -1
+		chalk_canvas_node = null
+		TileMap_node = null
+		GridMap_node = null
 
 
 func apply_chalkpp():
