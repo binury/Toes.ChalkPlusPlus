@@ -38,10 +38,9 @@ Or import this zip as a local mod through R2MM etc.
 6. To fill, equip the chalk/color you'd like to apply, select `fill` mode from the menu, and click on the color/area you wish to fill
 
 
-## Known Issues
+## [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
 
-- ~~Filling a blank canvas or empty area will fill the entire canvas, including the visually out-of-bounds surrounding grass area~~
-- Filling is not possible on the canvas near the aquarium due to technical limitations, for now
+## [Report an issue / Feedback](https://discord.gg/kjf3FCAMDb)
 
 ## Roadmap
 
@@ -53,6 +52,9 @@ Or import this zip as a local mod through R2MM etc.
 
 
 ## Changelog
+
+### v1.0.2
+- Hotfixed white chalk not working
 
 ### *v1.0.0*
 - Now requires [Tacklebox](https://thunderstore.io/c/webfishing/p/PuppyGirl/TackleBox/) as a dependency
