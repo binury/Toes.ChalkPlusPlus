@@ -355,9 +355,10 @@ func apply_chalkpp():
 			data = masking_tool(data)
 
 		MODES.FILL:
-			var cell = data[0]  # TODO: Clean
-			data = paint_bucket(cell[0], cell[1], cell[2])
-			# data.clear()
+			var painting = paint_bucket(data) # TODO Throttling
+
+		MODES.MIRROR:
+			data = mirror_tool(data)
 
 		_:
 			breakpoint
@@ -425,8 +426,17 @@ func _in_bounds(x: int, y: int) -> bool:
 	return (dx * dx + dy * dy) <= radius_sq
 
 
-func paint_bucket(start_x: int, start_y: int, new_color: int) -> Array:
-	var transformations := []
+## ! Mutates transformations arg - This is in order to yield and throttle fills
+func paint_bucket(transformations: Array) -> Array:
+	var limit = 25000
+	var iterations = 0
+
+	var start = transformations[0]
+	var start_x = start[0]
+	var start_y = start[1]
+	var new_color = start[2]
+	transformations.clear()
+
 	var target_color = TileMap_node.get_cell(start_x, start_y)
 
 	if target_color == new_color:
