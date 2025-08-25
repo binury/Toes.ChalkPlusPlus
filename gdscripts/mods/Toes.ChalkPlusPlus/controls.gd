@@ -23,13 +23,15 @@ onready var main = get_node("/root/ToesChalkPlusPlus")
 enum COLORS { WHITE, BLACK, RED, BLUE, YELLOW, SPECIAL, GREEN, NONE = -1 }
 const COLOR_NAMES = ["white", "black", "red", "blue", "yellow", "special", "green"]
 
-enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL }
+enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, MIRROR }
+const END_OF_MODES_INDEX = MODES.MIRROR
 const MODE_NAMES = {
 	MODES.NONE: "Off",
 	MODES.DITHER_CHECKER: "Checkerboard (Half) Brush",
 	MODES.DITHER_DOT: "Dotting (1/9th) Brush",
 	MODES.MASK: "Freehand Masking",
-	MODES.FILL: "Bucket Fill"
+	MODES.FILL: "Bucket Fill",
+	MODES.MIRROR: "Symmetrical Mirroring",
 }
 
 ## Drawing stylus
@@ -329,6 +331,20 @@ func set_canvas(canvas_id: int) -> void:
 		GridMap_node = null
 
 
+## Returns the horizontal midpoint
+func get_canvas_midpoint() -> int:
+	# These are all eyeballed approximations
+	match chalk_canvas_id:
+		_, 0:
+			return 100
+		1:
+			return 50
+		2:
+			return 80
+		3:
+			return 90
+
+
 func apply_chalkpp():
 	if not mouse1_is_held:
 		last_grid_pos = Vector2.INF
@@ -507,6 +523,37 @@ func paint_bucket(transformations: Array) -> Array:
 		queue.append(Vector2(cx, cy + 1))
 		queue.append(Vector2(cx, cy - 1))
 	return transformations
+
+
+func mirror_tool(transformations: Array) -> Array:
+	var result := []
+	for entry in transformations:
+		var x = entry[0]
+		var y = entry[1]
+		var color = entry[2]
+
+		var x_mid = get_canvas_midpoint()
+#		var y_mid = get_canvas_midpoint()
+		var x_diff = abs(x_mid - x)
+		var t1 = [x_mid - x_diff, y, color]
+		var t2 = [x_mid + x_diff, y, color]
+
+		for t in [t1, t2]:
+			if control_is_held:
+				var tx = t[0]
+				var ty = t[1]
+				var current_cell_color = TileMap_node.get_cell(tx, ty)
+				if current_cell_color != masking_color:
+					continue
+			result.append(t)
+
+#		var y_diff = abs(y_mid - y)
+#		result.append([x, y_mid - y_diff, color])
+#		result.append([x, y_mid + y_diff, color])
+
+#		result.append(entry)
+
+	return result
 
 
 func _update_canvas_node(transformations: Array, canvasActorID: int):
