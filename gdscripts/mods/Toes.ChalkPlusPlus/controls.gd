@@ -141,7 +141,8 @@ func _on_outgame() -> void:
 	chalk_canvasses.clear()
 	set_canvas(-1)
 	last_grid_pos = Vector2.INF
-	current_mode = MODES.NONE
+
+	set_mode(MODES.NONE)
 	set_mask_color(COLORS.NONE)
 
 
@@ -162,13 +163,26 @@ func _process(delta):
 	if not paint_node:
 		return
 
+
 	mouse_pos = paint_node.global_transform.origin
-	set_canvas(find_canvas_id(mouse_pos))
+	var canvas_id = find_canvas_id(mouse_pos)
+	if canvas_id < 0:
+		# Do this as two separate steps so that we don't
+		# immediately clear the canvas every we look away from it.
+		# This is important to facilitate the delayed fill...
+		# So that looking away from the canvas doesn't stop an in-progress fill.
+		return
+	set_canvas(canvas_id)
 	if not chalk_canvas_node:
 		return
 
 	var held_chalk_color = get_held_chalk_color()
-	activate_cpp(current_mode != MODES.NONE and (held_chalk_color > -1 or should_use_eraser_as_chalk))
+	activate_cpp(
+		(
+			current_mode != MODES.NONE
+			and (held_chalk_color == null or (held_chalk_color > -1 or should_use_eraser_as_chalk))
+		)
+	)
 	if chalk_canvas_node.paused:
 		apply_chalkpp()
 
@@ -195,12 +209,18 @@ func cycle_chalk_mode() -> void:
 
 	var forward := not alt_is_held and not shift_is_held
 
-	var END_OF_MODES_INDEX = MODES.FILL
+	var mode_to_set: int
 	if forward:
-		current_mode = MODES.NONE if current_mode == END_OF_MODES_INDEX else (current_mode + 1)
+		mode_to_set = MODES.NONE if current_mode == END_OF_MODES_INDEX else (current_mode + 1)
 	else:
-		current_mode = END_OF_MODES_INDEX if current_mode == MODES.NONE else (current_mode - 1)
+		mode_to_set = END_OF_MODES_INDEX if current_mode == MODES.NONE else (current_mode - 1)
+	set_mode(mode_to_set)
 
+
+func set_mode(mode: int = MODES.NONE) -> void:
+	if current_mode == mode:
+		return
+	current_mode = mode
 	emit_signal("changed_mode", current_mode)
 
 
@@ -214,7 +234,7 @@ func cycle_mask(forward: bool = true):
 	set_mask(selection)
 
 
-func set_mask_color(color: int) -> void:
+func set_mask_color(color: int = COLORS.NONE) -> void:
 	var selection = masks.find(color)
 	set_mask(selection)
 
@@ -468,6 +488,7 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 		Network.CHANNELS.CHALK
 	)
 
+
 # TODO: Mod conflicts with Calico/Awwptomize?
 func _set_spawn_prop_visibility(visible: bool) -> void:
 	if chalk_canvas_id != 0 or chalk_canvas_node == null:
@@ -484,8 +505,10 @@ func _set_spawn_prop_visibility(visible: bool) -> void:
 	big_tree.visible = visible
 	var big_tree_collision = big_tree.get_child(1).get_child(0)
 	big_tree_collision.disabled = !visible
-	for bench_num in [2,3,4]:
-		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
+	for bench_num in [2, 3, 4]:
+		var bench = scene.get_node_or_null(
+			"Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num)
+		)
 		if bench == null:
 			Chat.notify("[CHALK++] Where the fuck is the bench %s???" % bench_num)
 			return
