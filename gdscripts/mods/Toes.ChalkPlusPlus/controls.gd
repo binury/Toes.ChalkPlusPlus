@@ -32,6 +32,10 @@ const MODE_NAMES = {
 	MODES.FILL: "Bucket Fill"
 }
 
+## Drawing stylus
+var pen_is_connected := false
+var last_pressure_reading := 0.0
+
 var local_player: Node
 var paint_node: Spatial
 
@@ -119,6 +123,15 @@ func _input(event: InputEvent):
 			get_tree().set_input_as_handled()
 			cycle_mask(true)
 
+	elif event is InputEventMouseMotion and main.config["experimentalStylusControls"]:
+		last_pressure_reading = event.pressure
+		if last_pressure_reading > 0.0:
+			if pen_is_connected == false:
+				Chat.notify("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
+				Chat.write("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
+			print("last pressure reading %s" % last_pressure_reading)
+			pen_is_connected = true
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -145,6 +158,10 @@ func _on_outgame() -> void:
 	set_mode(MODES.NONE)
 	set_mask_color(COLORS.NONE)
 
+	# Just in case?
+	last_pressure_reading = 0.0
+	pen_is_connected = false
+
 
 func _process(delta):
 	# To prevent any accidents...
@@ -163,6 +180,25 @@ func _process(delta):
 	if not paint_node:
 		return
 
+	if (
+		main.config["experimentalStylusControls"]
+		and pen_is_connected
+		and mouse1_is_held
+		and current_mode != MODES.NONE
+		and false # TODO
+	):
+		var dotting_pressure_limit = 0.01
+		var checker_pressure_limit = 0.25
+		var masking_pressure_limit = 0.5
+		var fill_pressure_limit = 0.8
+		if last_pressure_reading > fill_pressure_limit:
+			set_mode(MODES.FILL)
+		elif last_pressure_reading > masking_pressure_limit:
+			set_mode(MODES.MASK)
+		elif last_pressure_reading > checker_pressure_limit:
+			set_mode(MODES.DITHER_CHECKER)
+		elif last_pressure_reading > dotting_pressure_limit:
+			set_mode(MODES.DITHER_DOT)
 
 	mouse_pos = paint_node.global_transform.origin
 	var canvas_id = find_canvas_id(mouse_pos)

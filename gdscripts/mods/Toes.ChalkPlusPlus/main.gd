@@ -22,9 +22,7 @@ onready var ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn"
 const MOD_ID = "Toes.ChalkPlusPlus"
 const CYCLE_ACTION_NAME = "cycle_chalk++_mode"
 var default_config := {
-	"modeSelectKey": 89,
-	"instantFill": true,
-	"useEraserAsChalk": true,
+	"modeSelectKey": 89, "instantFill": true, "useEraserAsChalk": true, "experimentalStylusControls": false
 }
 var config := {}
 
