@@ -41,6 +41,19 @@ func _process(_d):
 	if PlayerAPI.in_game == false:
 		self.queue_free()
 
+	var MASK_ACTIVE_MSG = " [color=black][ACTIVE][/color]"
+	if (
+		main.ChalkPP.current_mode == MODES.MASK
+		or (
+			main.ChalkPP.control_is_held
+			and main.ChalkPP.current_mode in [MODES.DITHER_CHECKER, MODES.DITHER_DOT, MODES.MIRROR]
+		)
+	):
+		if details.bbcode_text.find(MASK_ACTIVE_MSG) == -1:
+			details.bbcode_text = details.bbcode_text + MASK_ACTIVE_MSG
+	else:
+		details.bbcode_text = details.bbcode_text.replace(MASK_ACTIVE_MSG, "")
+
 
 func make_visible():
 	self.visible = true
@@ -57,11 +70,8 @@ func change_mask(mask: int) -> void:
 	var mask_color = MASKS[mask]
 	var mask_color_name = COLOR_NAMES[mask_color]
 	if mask_color == COLORS.SPECIAL:
-		details.bbcode_text = "[rainbow] Mask: [i]%s[/i][/rainbow]" % mask_color_name
+		details.bbcode_text = "[rainbow] Mask: %s[/rainbow]" % mask_color_name
 	elif mask_color == COLORS.NONE:
-		details.bbcode_text = " Mask: [i]Alpha[/i]"
+		details.bbcode_text = " Mask: Alpha"
 	else:
-		details.bbcode_text = (
-			"[color=%s] Mask: [i]%s[/i][/color]"
-			% [mask_color_name, mask_color_name]
-		)
+		details.bbcode_text = ("[color=%s] Mask: %s[/color]" % [mask_color_name, mask_color_name])
