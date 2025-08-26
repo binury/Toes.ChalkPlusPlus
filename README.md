@@ -1,12 +1,12 @@
 # Chalk++
 
 <img src="https://i.imgur.com/8TRBtmH.jpeg" width=1024 alt="Chalk++ Banner Image">
-<a href="https://cara.app/purame"><center><small>Chalk++ art by Ame</small></a>
+<a href="https://cara.app/purame"><small>Chalk++ art by Ame</small></a>
 
 <br/>
 
 <img src="https://i.imgur.com/Grs6byr.png" height=128>
-</center>
+
 
 ## Installation
 
