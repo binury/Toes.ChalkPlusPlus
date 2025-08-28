@@ -32,13 +32,14 @@ $gitTagOrHash = if (git describe --exact-match --tags HEAD 2>$null) {
 } else {
     git rev-parse --short HEAD
 }
-$zipPath = ".\thunderstore\myModName_$gitTagOrHash.zip"
+$zipPath = ".\thunderstore\Chalk++_$gitTagOrHash.zip"
 Compress-Archive -Path @(
    ".\thunderstore\GDWeave",
    ".\thunderstore\icon.png",
    ".\thunderstore\manifest.json",
    ".\thunderstore\CHANGELOG.md",
    ".\thunderstore\README.md"
+   ".\thunderstore\LICENSE"
 ) -DestinationPath $zipPath -Force
 
 if ($LASTEXITCODE -ne 0) {
