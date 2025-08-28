@@ -2,7 +2,7 @@
 
 param(
     [string]$Configuration = "Release",
-    [string]$ProjectPath = ".\GDWeave.Sample\MyModName.csproj",
+    [string]$ProjectPath = ".\GDWeave.Sample\ChalkPlusPlus.csproj",
     [string]$GDWeavePath = "C:\Program Files (x86)\Steam\steamapps\common\WEBFISHING\GDWeave"
 )
 
@@ -19,6 +19,11 @@ $version = (Get-Content $GDWeaveManifestPath | ConvertFrom-Json).Metadata.Versio
 $manifest = Get-Content $ThunderstoreManifestPath | ConvertFrom-Json
 $manifest.version_number = $version
 $manifest | ConvertTo-Json -Depth 1 | Set-Content $ThunderstoreManifestPath
+
+cp ".\gdscripts\Chalk++.pck" ".\thunderstore\GDWeave\mods"
+cp ".\GDWeave.Sample\bin\Release\net8.0\Chalk++.dll" ".\thunderstore\GDWeave\mods"
+cp ".\GDWeave.Sample\bin\Release\net8.0\manifest.json" ".\thunderstore\GDWeave\mods"
+
 
 # Zip it up
 $gitTagOrHash = if (git describe --exact-match --tags HEAD 2>$null) {
