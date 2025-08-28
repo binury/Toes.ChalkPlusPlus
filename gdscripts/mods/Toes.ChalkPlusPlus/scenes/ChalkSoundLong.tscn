@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://mods/Toes.ChalkPlusPlus/chalk-long.wav" type="AudioStream" id=1]
+[ext_resource path="res://mods/Toes.ChalkPlusPlus/assets/chalk-long.wav" type="AudioStream" id=1]
 
 [node name="ChalkSoundLong" type="AudioStreamPlayer3D"]
 stream = ExtResource( 1 )

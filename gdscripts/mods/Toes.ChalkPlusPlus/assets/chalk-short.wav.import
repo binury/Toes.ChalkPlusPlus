@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/chalk-long.wav-b89adf497c74446ddbe55f4beac93bc3.sample"
+path="res://.import/chalk-short.wav-4ff189b6ccf5c63444196ab009d93910.sample"
 
 [deps]
 
-source_file="res://mods/Toes.ChalkPlusPlus/chalk-long.wav"
-dest_files=[ "res://.import/chalk-long.wav-b89adf497c74446ddbe55f4beac93bc3.sample" ]
+source_file="res://mods/Toes.ChalkPlusPlus/assets/chalk-short.wav"
+dest_files=[ "res://.import/chalk-short.wav-4ff189b6ccf5c63444196ab009d93910.sample" ]
 
 [params]
 

@@ -2,12 +2,12 @@
 
 importer="wav"
 type="AudioStreamSample"
-path="res://.import/drawing3.wav-b19180e23fa31cfd967d0b8cfc831648.sample"
+path="res://.import/drawing.wav-faa796ea2d0c4a709d04cf1a87628723.sample"
 
 [deps]
 
-source_file="res://mods/Toes.ChalkPlusPlus/drawing3.wav"
-dest_files=[ "res://.import/drawing3.wav-b19180e23fa31cfd967d0b8cfc831648.sample" ]
+source_file="res://mods/Toes.ChalkPlusPlus/assets/drawing.wav"
+dest_files=[ "res://.import/drawing.wav-faa796ea2d0c4a709d04cf1a87628723.sample" ]
 
 [params]
 

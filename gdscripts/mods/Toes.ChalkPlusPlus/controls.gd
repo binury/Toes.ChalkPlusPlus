@@ -53,13 +53,13 @@ var last_grid_pos: Vector2
 ## Whether or not holding eraser should count the same as a chalk
 var should_use_eraser_as_chalk := true
 
-var pencil_scene := preload("res://mods/Toes.ChalkPlusPlus/DrawingSound.tscn")
-var chalk_long_scene := preload("res://mods/Toes.ChalkPlusPlus/ChalkSoundLong.tscn")
-var chalk_short_scene := preload("res://mods/Toes.ChalkPlusPlus/ChalkSoundShort.tscn")
+var pencil_scene := preload("res://mods/Toes.ChalkPlusPlus/scenes/DrawingSound.tscn")
+var chalk_long_scene := preload("res://mods/Toes.ChalkPlusPlus/scenes/ChalkSoundLong.tscn")
+var chalk_short_scene := preload("res://mods/Toes.ChalkPlusPlus/scenes/ChalkSoundShort.tscn")
 var audio_scenes = {
-	"chalk_long": {"scene": chalk_long_scene, "db": -5},
+	"chalk_long": {"scene": chalk_long_scene, "db": -6.5},
 	"chalk_short": {"scene": chalk_short_scene, "db": -5},
-	"pencil": {"scene": pencil_scene, "db": -20},
+	"pencil": {"scene": pencil_scene, "db": -14.0},
 }
 var player
 const CHALK_ITEMS := {
@@ -165,6 +165,7 @@ func _notify(msg: String) -> void:
 
 
 func _on_ingame() -> void:
+	randomize()
 	get_canvasses()
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	var audio = _get_random_sound()
@@ -259,8 +260,9 @@ func _play_random_section():
 	player = audio.scene.instance()
 	player.unit_db = audio.db
 	var start_time = rand_range(0, player.stream.get_length() - 2.0)  # ensure at least 2s left
-	player.play()
 	player.seek(start_time)
+	player.play()
+
 
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	paint.add_child(player, true)
