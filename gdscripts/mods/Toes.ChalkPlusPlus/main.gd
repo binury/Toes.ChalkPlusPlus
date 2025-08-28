@@ -22,7 +22,11 @@ onready var ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn"
 const MOD_ID = "Toes.ChalkPlusPlus"
 const CYCLE_ACTION_NAME = "cycle_chalk++_mode"
 var default_config := {
-	"modeSelectKey": 89, "instantFill": true, "useEraserAsChalk": true, "experimentalStylusControls": false
+	"modeSelectKey": 89,
+	"instantFill": true,
+	"useEraserAsChalk": true,
+	"experimentalStylusControls": false,
+	"drawingSounds": true
 }
 var config := {}
 
@@ -49,9 +53,9 @@ func _on_ingame():
 		ChalkPP = null
 	if ChalkPP == null or not ChalkPP.is_inside_tree():
 		ChalkPP = preload("res://mods/Toes.ChalkPlusPlus/controls.gd").new()
-		add_child(ChalkPP)
+		add_child(ChalkPP, true)
 	ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn").instance()
-	get_tree().root.add_child(ChalkPP_UI)
+	get_tree().root.add_child(ChalkPP_UI, true)
 
 
 func init_config() -> void:

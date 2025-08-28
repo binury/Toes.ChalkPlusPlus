@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://mods/Toes.ChalkPlusPlus/drawing4.wav" type="AudioStream" id=1]
+
+[node name="DrawingSound" type="AudioStreamPlayer3D"]
+stream = ExtResource( 1 )
+attenuation_model = 3
+unit_db = -38.613
+max_db = -0.826
+max_distance = 18.59
+attenuation_filter_cutoff_hz = 20500.0
+attenuation_filter_db = 0.0
+doppler_tracking = 1

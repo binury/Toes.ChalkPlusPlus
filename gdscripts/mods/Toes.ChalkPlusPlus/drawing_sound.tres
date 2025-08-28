@@ -1,0 +1,6 @@
+[gd_resource type="AudioStreamSample" format=2]
+
+[resource]
+format = 1
+loop_mode = 1
+stereo = true

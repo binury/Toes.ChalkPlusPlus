@@ -53,6 +53,15 @@ var last_grid_pos: Vector2
 ## Whether or not holding eraser should count the same as a chalk
 var should_use_eraser_as_chalk := true
 
+var pencil_scene := preload("res://mods/Toes.ChalkPlusPlus/DrawingSound.tscn")
+var chalk_long_scene := preload("res://mods/Toes.ChalkPlusPlus/ChalkSoundLong.tscn")
+var chalk_short_scene := preload("res://mods/Toes.ChalkPlusPlus/ChalkSoundShort.tscn")
+var audio_scenes = {
+	"chalk_long": {"scene": chalk_long_scene, "db": -5},
+	"chalk_short": {"scene": chalk_short_scene, "db": -5},
+	"pencil": {"scene": pencil_scene, "db": -20},
+}
+var player
 const CHALK_ITEMS := {
 	"chalk_eraser": COLORS.NONE,
 	"chalk_white": COLORS.WHITE,
@@ -102,13 +111,13 @@ var eraser_shortcut_requested := false
 ## Eraser is online
 var eraser_shortcut_active := false
 
+
 func _ready():
 	main.connect("cycle_chalk_mode", self, "cycle_chalk_mode")
 	Players.connect("ingame", self, "_on_ingame")
 	Players.connect("outgame", self, "_on_outgame")
 	self.set_process_unhandled_input(true)
 	should_use_eraser_as_chalk = main.config["useEraserAsChalk"]
-	add_child(audio, true)
 
 
 func _input(event: InputEvent):
@@ -146,6 +155,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == BUTTON_LEFT:
 			mouse1_is_held = event.is_pressed()
 			if not mouse1_is_held:
+				self._stop_sounds()
 				last_grid_pos = Vector2.INF
 
 
@@ -156,6 +166,9 @@ func _notify(msg: String) -> void:
 
 func _on_ingame() -> void:
 	get_canvasses()
+	var paint: Spatial = Players.local_player.get_node("paint_node")
+	var audio = _get_random_sound()
+	paint.add_child(audio.scene.instance(), true)
 
 
 func _on_outgame() -> void:
@@ -184,6 +197,7 @@ func _process(delta):
 	if Players.in_game == false:
 		return
 	local_player = Players.local_player
+
 	paint_node = local_player.get_node("paint_node")
 	if not paint_node:
 		return
@@ -193,8 +207,8 @@ func _process(delta):
 		and pen_is_connected
 		and mouse1_is_held
 		and current_mode != MODES.NONE
-		and false # TODO
-	):
+		and false
+	):  # TODO
 		var dotting_pressure_limit = 0.01
 		var checker_pressure_limit = 0.25
 		var masking_pressure_limit = 0.5
@@ -229,6 +243,35 @@ func _process(delta):
 	)
 	if chalk_canvas_node.paused:
 		apply_chalkpp()
+
+
+func _get_random_sound() -> Dictionary:
+	var scene_names: Array = audio_scenes.keys()
+	var selected_scene: String = scene_names[randi() % scene_names.size()]
+	var audio: Dictionary = audio_scenes[selected_scene]
+	return audio
+
+
+func _play_random_section():
+	if is_instance_valid(player) and player.playing or main.config["drawingSounds"] == false:
+		return
+	var audio = _get_random_sound()
+	player = audio.scene.instance()
+	player.unit_db = audio.db
+	var start_time = rand_range(0, player.stream.get_length() - 2.0)  # ensure at least 2s left
+	player.play()
+	player.seek(start_time)
+
+	var paint: Spatial = Players.local_player.get_node("paint_node")
+	paint.add_child(player, true)
+
+
+func _stop_sounds() -> void:
+	if is_instance_valid(player) and player.playing:
+		player.stop()
+		player.queue_free()
+		var paint: Spatial = Players.local_player.get_node("paint_node")
+		paint.remove_child(player)
 
 
 func activate_cpp(active: bool) -> void:
@@ -354,10 +397,12 @@ func get_canvas_midpoint() -> int:
 func apply_chalkpp():
 	if not mouse1_is_held:
 		last_grid_pos = Vector2.INF
+	if not (mouse1_is_held or eraser_shortcut_requested):
+		self._stop_sounds()
 
 	var size = 1
 
-	if current_mode == MODES.MASK or eraser_shortcut_requested:
+	if current_mode in [MODES.MASK] or eraser_shortcut_requested:
 		size = 2
 		if shift_is_held:
 			size = 4
@@ -370,7 +415,6 @@ func apply_chalkpp():
 	if grid_diff.length() > chalk_canvas_node.canvas_size:
 		# if mouse1_is_held: Chat.notify("You can't draw here")
 		return
-
 
 	var x = int(floor(100 - grid_diff.x * 10))
 	var z = int(floor(100 - grid_diff.z * 10))
@@ -404,35 +448,35 @@ func apply_chalkpp():
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
 	elif mouse1_is_held:
-	# Masking color picker
-	if alt_is_held:
-		var cell = data[0]
-		var current_cell_color = TileMap_node.get_cell(cell[0], cell[1])
-		set_mask_color(current_cell_color)
-		return
+		# Masking color picker
+		if alt_is_held:
+			var cell = data[0]
+			var current_cell_color = TileMap_node.get_cell(cell[0], cell[1])
+			set_mask_color(current_cell_color)
+			return
 
-	match current_mode:
-		MODES.DITHER_DOT:
-			data = dotting_brush(data)
+		match current_mode:
+			MODES.DITHER_DOT:
+				data = dotting_brush(data)
 
-		MODES.DITHER_CHECKER:
-			data = checkerboard_brush(data)
+			MODES.DITHER_CHECKER:
+				data = checkerboard_brush(data)
 
-		MODES.MASK:
-			data = masking_tool(data)
+			MODES.MASK:
+				data = masking_tool(data)
 
-		MODES.FILL:
-			var painting = paint_bucket(data) # TODO Throttling
+			MODES.FILL:
+				var painting = paint_bucket(data)  # TODO Throttling
 
-		MODES.MIRROR:
-			data = mirror_tool(data)
+			MODES.MIRROR:
+				data = mirror_tool(data)
 
-		_:
-			breakpoint
+			_:
+				breakpoint
 
-	emit_signal("applied_drawing")
-	_update_canvas_node(data, chalk_canvas_id)
-	last_grid_pos = new_grid_pos
+		emit_signal("applied_drawing")
+		_update_canvas_node(data, chalk_canvas_id)
+		last_grid_pos = new_grid_pos
 
 
 func checkerboard_brush(transformations, offset = shift_is_held):
@@ -553,13 +597,13 @@ func mirror_tool(transformations: Array) -> Array:
 		var t1 = [x_mid - x_diff, y, color]
 		var t2 = [x_mid + x_diff, y, color]
 
-			if control_is_held:
+		if control_is_held:
 			var tx = t1[0]
 			var ty = t1[1]
 			# Only masking t1. t2 applied no matter what
-				var current_cell_color = TileMap_node.get_cell(tx, ty)
-				if current_cell_color != masking_color:
-					continue
+			var current_cell_color = TileMap_node.get_cell(tx, ty)
+			if current_cell_color != masking_color:
+				continue
 
 		result.append(t1)
 		result.append(t2)
@@ -574,6 +618,7 @@ func mirror_tool(transformations: Array) -> Array:
 
 
 func _update_canvas_node(transformations: Array, canvasActorID: int):
+	_play_random_section()
 	var canvasData = []
 
 	for pixelData in transformations:
@@ -592,10 +637,7 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 			call_deferred("clear", canvasData)
 
 	Network._send_P2P_Packet(
-		{"type": "chalk_packet", "data": canvasData, "canvas_id": canvasActorID},
-		"peers",
-		2,
-		Network.CHANNELS.CHALK
+		{"type": "chalk_packet", "data": canvasData, "canvas_id": canvasActorID}, "peers", 2, Network.CHANNELS.CHALK
 	)
 
 
@@ -616,9 +658,7 @@ func _set_spawn_prop_visibility(visible: bool) -> void:
 	var big_tree_collision = big_tree.get_child(1).get_child(0)
 	big_tree_collision.disabled = !visible
 	for bench_num in [2, 3, 4]:
-		var bench = scene.get_node_or_null(
-			"Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num)
-		)
+		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
 		if bench == null:
 			Chat.notify("[CHALK++] Where the fuck is the bench %s???" % bench_num)
 			return
