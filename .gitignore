@@ -8,3 +8,6 @@ obj/
 gdscripts/Chalk++.pck
 *.otf
 *.zip
+*.dll
+*.pck
+thunderstore/GDWeave/mods/manifest.json

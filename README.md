@@ -45,6 +45,9 @@ the trees and benches on canvasses are made invisible and intangible.
 
 6. To fill, equip the chalk/color you'd like to apply, select `fill` mode from the menu, and click on the color/area you wish to fill
 
+7. You can erase chalk _without ever needing to equip your eraser item_ by pressing the `E` key.
+   Any mode transformations will still be respected, while erasing
+
 ## Options
 
 Chalk++ options can be changed in-game using the Tacklebox UI in settings
@@ -53,6 +56,7 @@ or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
 - `useEraserAsChalk` (Default: `true`): whether or not holding eraser should be considered the same as holding a chalk. I.e., a 'brown chalk'.
   Changing this to `false` will allow you to use the eraser while in any mode.
   Setting this to `true` allows you to use the eraser as a chalk with Chalk++ features.
+- `drawingSounds` (Default: `true`): If enabled, immersing sounds will play when drawing with Chalk++
 
 ## Project
 
@@ -65,6 +69,14 @@ or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
 ### [Roadmap and feature requests](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
 
 ## Changelog
+
+### v1.4.0 - QOL Enhancements
+
+- Added new eraser shortcut: You can erase chalk _without ever needing to equip your eraser item_
+by pressing the `E` key.
+  - Any mode transformations will still be respected, while erasing!
+- Masking in mirror mode **_no longer masks the mirror_** - only whatever you are targeting with your chalk
+- Added chalk drawing ambient sounds. You can disable these in the config [options](#options) if you prefer.
 
 ### v1.3.0 - Mirror Mode 🪞
 
