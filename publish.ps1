@@ -32,7 +32,7 @@ $gitTagOrHash = if (git describe --exact-match --tags HEAD 2>$null) {
 } else {
     git rev-parse --short HEAD
 }
-$zipPath = ".\thunderstore\Chalk++_$gitTagOrHash.zip"
+$zipPath = ".\Chalk++_$gitTagOrHash.zip"
 Compress-Archive -Path @(
    ".\thunderstore\GDWeave",
    ".\thunderstore\icon.png",
