@@ -41,6 +41,9 @@ func _process(_d):
 	if PlayerAPI.in_game == false:
 		self.queue_free()
 
+	var HUD = $"/root/playerhud"
+	self.visible = main.ChalkPP.current_mode != MODES.NONE and !HUD.hud_hidden
+
 	var MASK_ACTIVE_MSG = " [color=black][ACTIVE][/color]"
 	if (
 		main.ChalkPP.current_mode == MODES.MASK
