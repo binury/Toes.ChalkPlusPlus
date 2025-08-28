@@ -97,6 +97,10 @@ var alt_is_held := false
 var control_is_held := false
 var shift_is_held := false
 
+## Shortcut is held
+var eraser_shortcut_requested := false
+## Eraser is online
+var eraser_shortcut_active := false
 
 func _ready():
 	main.connect("cycle_chalk_mode", self, "cycle_chalk_mode")
@@ -104,6 +108,7 @@ func _ready():
 	Players.connect("outgame", self, "_on_outgame")
 	self.set_process_unhandled_input(true)
 	should_use_eraser_as_chalk = main.config["useEraserAsChalk"]
+	add_child(audio, true)
 
 
 func _input(event: InputEvent):
@@ -113,6 +118,7 @@ func _input(event: InputEvent):
 				shift_is_held = event.is_pressed()
 			KEY_CONTROL:
 				control_is_held = event.is_pressed()
+
 			## Don't try to do these here. it doesn't work well- use process
 #			KEY_ALT:
 #				alt_is_held = event.is_pressed()
@@ -174,7 +180,7 @@ func _process(delta):
 		shift_is_held = false
 	else:
 		alt_is_held = Input.is_key_pressed(KEY_ALT)
-
+		eraser_shortcut_requested = Input.is_key_pressed(KEY_E)
 	if Players.in_game == false:
 		return
 	local_player = Players.local_player
@@ -348,11 +354,10 @@ func get_canvas_midpoint() -> int:
 func apply_chalkpp():
 	if not mouse1_is_held:
 		last_grid_pos = Vector2.INF
-		return
 
 	var size = 1
 
-	if current_mode == MODES.MASK:
+	if current_mode == MODES.MASK or eraser_shortcut_requested:
 		size = 2
 		if shift_is_held:
 			size = 4
@@ -363,7 +368,9 @@ func apply_chalkpp():
 
 	var grid_diff = chalk_canvas_node.global_transform.origin - mouse_pos
 	if grid_diff.length() > chalk_canvas_node.canvas_size:
+		# if mouse1_is_held: Chat.notify("You can't draw here")
 		return
+
 
 	var x = int(floor(100 - grid_diff.x * 10))
 	var z = int(floor(100 - grid_diff.z * 10))
@@ -389,6 +396,14 @@ func apply_chalkpp():
 			for dz in range(size):
 				data.append([x + dx, z + dz, get_held_chalk_color()])
 
+	if eraser_shortcut_requested:
+		eraser_shortcut_active = true
+		for cell in data:
+			cell[2] = -1
+		_update_canvas_node(data, chalk_canvas_id)
+		emit_signal("applied_drawing")
+		eraser_shortcut_active = false
+	elif mouse1_is_held:
 	# Masking color picker
 	if alt_is_held:
 		var cell = data[0]
