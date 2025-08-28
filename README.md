@@ -7,7 +7,6 @@
 
 <img src="https://i.imgur.com/Grs6byr.png" height=128>
 
-
 ## Installation
 
 **_Make sure you don't have an older version of Chalk++ installed at the same time!_**
@@ -70,10 +69,17 @@ or by manually editing the `GDWeave\configs\Toes.ChalkPlusPlus.json` file.
 
 ## Changelog
 
+### v1.5.0
+
+- **New** Added an unlimited distance override for the limit at which players are were able to reach and draw on a canvas with chalk
+  - You can now draw on canvasses without having to be directly on top of or touching them
+- Fixed accidentally triggering eraser shortcut
+- Fixed masking color scroll-selection [inadvertently zooming the camera](https://github.com/binury/Toes.ChalkPlusPlus/issues/13)
+
 ### v1.4.0 - QOL Enhancements
 
 - Added new eraser shortcut: You can erase chalk _without ever needing to equip your eraser item_
-by pressing the `E` key.
+  by pressing the `E` key.
   - Any mode transformations will still be respected, while erasing!
 - Masking in mirror mode **_no longer masks the mirror_** - only whatever you are targeting with your chalk
 - Added chalk drawing ambient sounds. You can disable these in the config [options](#options) if you prefer.
