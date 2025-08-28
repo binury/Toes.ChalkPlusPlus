@@ -538,14 +538,16 @@ func mirror_tool(transformations: Array) -> Array:
 		var t1 = [x_mid - x_diff, y, color]
 		var t2 = [x_mid + x_diff, y, color]
 
-		for t in [t1, t2]:
 			if control_is_held:
-				var tx = t[0]
-				var ty = t[1]
+			var tx = t1[0]
+			var ty = t1[1]
+			# Only masking t1. t2 applied no matter what
 				var current_cell_color = TileMap_node.get_cell(tx, ty)
 				if current_cell_color != masking_color:
 					continue
-			result.append(t)
+
+		result.append(t1)
+		result.append(t2)
 
 #		var y_diff = abs(y_mid - y)
 #		result.append([x, y_mid - y_diff, color])
