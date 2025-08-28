@@ -1,6 +1,6 @@
 # Changelog
 
-### v1.5.0
+### v1.5.1
 
 - **New** Added an unlimited distance override for the limit at which players are were able to reach and draw on a canvas with chalk
   - You can now draw on canvasses without having to be directly on top of or touching them

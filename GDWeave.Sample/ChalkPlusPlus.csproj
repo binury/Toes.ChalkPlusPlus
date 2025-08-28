@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblySearchPaths>$(AssemblySearchPaths);$(GDWeavePath)/core;C:/Program Files (x86)/Steam/steamapps/common/WEBFISHING/GDWeave/core</AssemblySearchPaths>
     <AssemblyName>Chalk++</AssemblyName>
-    <Version>1.5.0</Version>
+    <Version>1.5.1</Version>
     <Authors>Toes</Authors>
     <Company>Toes d/b/a Fuck Off PP Inc.</Company>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
