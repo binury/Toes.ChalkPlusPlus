@@ -194,7 +194,7 @@ func _process(delta):
 		shift_is_held = false
 	else:
 		alt_is_held = Input.is_key_pressed(KEY_ALT)
-		eraser_shortcut_requested = Input.is_key_pressed(KEY_E)
+		eraser_shortcut_requested = Input.is_key_pressed(KEY_E) and not Players.is_busy()
 	if Players.in_game == false:
 		return
 	local_player = Players.local_player
