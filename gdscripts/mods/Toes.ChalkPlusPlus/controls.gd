@@ -133,11 +133,12 @@ func _input(event: InputEvent):
 #				alt_is_held = event.is_pressed()
 
 	elif event is InputEventMouseButton:
-		if alt_is_held and event.is_pressed() and event.button_index == BUTTON_WHEEL_UP:
-			get_tree().set_input_as_handled()
+		if alt_is_held:
+			if Input.is_action_just_released("zoom_in"):
+				local_player.camera_zoom += 0.5
 			cycle_mask(false)
-		elif alt_is_held and event.is_pressed() and event.button_index == BUTTON_WHEEL_DOWN:
-			get_tree().set_input_as_handled()
+			if Input.is_action_just_released("zoom_out"):
+				local_player.camera_zoom -= 0.5
 			cycle_mask(true)
 
 	elif event is InputEventMouseMotion and main.config["experimentalStylusControls"]:
