@@ -42,14 +42,14 @@ With it, you can paint faster, erase smarter, and unlock new expressive patterns
 
 1. Equip any chalk to activate Chalk++.
 2. Press `Y` to cycle modes. Hold `<Shift> + Y` to cycle backwards.  
-3. **Checkerboard offset:** Hold `<Shift>` while drawing.  
+3. **Checkerboard brush offset:** Hold `<Shift>` while drawing.  
 4. **Masking:** Hold `<Ctrl>` while using dithering brushes.  
 5. **Color-based masking:**  
-   - Hold `<Alt>` + scroll to pick a masking color.  
+   - Hold `<Alt>` while scrolling up or down to assign a masking color.  
    - `<Alt>` + click a canvas cell to sample its color directly.  
    - Chalk drawn outside your masking color is discarded.  
 6. **Fill tool:** Equip chalk/color → select *Fill* mode → click an area to flood-fill.  
-7. **Quick erase:** Press `E` to erase without equipping the eraser. Mode effects (mirror, mask, etc.) still apply.
+7. **Quick erase:** Press `E` to erase without equipping the eraser. Mode effects (mirror, brush patterns, etc.) still apply!
 
 ---
 
