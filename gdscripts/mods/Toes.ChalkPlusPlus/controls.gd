@@ -450,7 +450,7 @@ func apply_chalkpp():
 		_update_canvas_node(data, chalk_canvas_id)
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
-	elif mouse1_is_held:
+	elif get_held_chalk_color() != null and mouse1_is_held:
 		# Masking color picker
 		if alt_is_held:
 			var cell = data[0]
@@ -616,7 +616,6 @@ func mirror_tool(transformations: Array) -> Array:
 #		result.append([x, y_mid + y_diff, color])
 
 #		result.append(entry)
-
 	return result
 
 
