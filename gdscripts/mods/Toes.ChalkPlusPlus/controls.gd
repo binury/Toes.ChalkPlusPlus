@@ -88,14 +88,14 @@ const masks := [
 ]
 ## Masking color names lookup
 const mask_names := {
-	-1: "Alpha 🥛 ",
-	COLORS.WHITE: "White 🤍",
-	COLORS.BLACK: "Black ⚫",
-	COLORS.RED: "Red ❤️",
-	COLORS.GREEN: "Green 🟩",
-	COLORS.BLUE: "Blue 🟦",
-	COLORS.YELLOW: "Yellow ⭐",
-	COLORS.SPECIAL: "Special 🌈",
+	-1: "Alpha",
+	COLORS.WHITE: "White",
+	COLORS.BLACK: "Black",
+	COLORS.RED: "Red️",
+	COLORS.GREEN: "Green",
+	COLORS.BLUE: "Blue",
+	COLORS.YELLOW: "Yellow",
+	COLORS.SPECIAL: "Special",
 }
 ## Index of color
 var mask_selection := 0
