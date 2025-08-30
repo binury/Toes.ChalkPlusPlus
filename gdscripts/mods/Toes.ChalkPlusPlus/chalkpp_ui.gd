@@ -12,15 +12,40 @@
 
 extends CanvasLayer
 
+signal scrolled_up
+signal scrolled_down
+signal mask_selected
+
+const DEBUG := false
+
 onready var title := $"Info/Panel/VBoxContainer/Title"
 onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
 
 onready var PlayerAPI = get_node("/root/ToesSocks/Players")
+# var ss: ScrollContainer
 
 const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
 const COLORS := Chalk.COLORS
-const COLOR_NAMES := Chalk.COLOR_NAMES
+const COLOR_CODES := {
+	COLORS.WHITE: "#faebd4",
+	COLORS.BLACK: "#040c19",
+	COLORS.RED: "#b40028",
+	COLORS.BLUE: "#008886",
+	COLORS.YELLOW: "#e59f02",
+	COLORS.GREEN: "#7fa424",
+	COLORS.NONE: "#FFDBB6",
+}
+const COLOR_NAMES := {
+	COLORS.NONE: "Alpha",
+	COLORS.WHITE: Chalk.COLOR_NAMES[0],
+	COLORS.BLACK: Chalk.COLOR_NAMES[1],
+	COLORS.RED: Chalk.COLOR_NAMES[2],
+	COLORS.BLUE: Chalk.COLOR_NAMES[3],
+	COLORS.YELLOW: Chalk.COLOR_NAMES[4],
+	COLORS.SPECIAL: Chalk.COLOR_NAMES[5],
+	COLORS.GREEN: Chalk.COLOR_NAMES[6],
+}
 const MODES := Chalk.MODES
 const MODE_NAMES := Chalk.MODE_NAMES
 const MASKS := Chalk.masks
@@ -30,11 +55,30 @@ const MASK_NAMES := Chalk.mask_names
 func _ready():
 	main.ChalkPP.connect("changed_mode", self, "change_mode")
 	main.ChalkPP.connect("changed_mask", self, "change_mask")
-#	while title == null and details == null:
-#		yield(get_tree(), "idle_frame")
 	title.bbcode_text = ""
-	details.bbcode_text = " Mask: [b]Alpha[/b]"
+	details.bbcode_text = " Mask: [b]%s[/b]" % MASK_NAMES[COLORS.NONE]
 	self.visible = false
+
+#	ss = get_node("Info/Panel/VBoxContainer/ScrollSelector")
+#	ss.connect("scroll_started", self, "_on_scroll_started")
+
+	var color_menu: MenuButton = get_node("Info/Panel/VBoxContainer/MenuButton")
+	var color_picker := color_menu.get_popup()
+	color_picker.connect("id_pressed", self, "_handle_mask_menu_press")
+	# color_picker.add
+	for mask in MASKS:
+		color_picker.add_radio_check_item(
+			MASK_NAMES[mask],
+			# Offset this by +1 due to Alpha being -1
+			mask + 1
+		)
+
+
+func _handle_mask_menu_press(color: int) -> void:
+	# Offset this by -1 due to ID being offset by +1
+	color -= 1
+	_debug("MASK MENU PRESSED", color)
+	main.ChalkPP.set_mask_color(color)
 
 
 func _process(_d):
@@ -67,14 +111,23 @@ func change_mode(mode: int) -> void:
 	title.bbcode_text = " [i]%s[/i]" % MODE_NAMES[mode]
 
 
-func change_mask(mask: int) -> void:
+func change_mask(idx: int) -> void:
+	_debug("Got mask change signal for color idx", idx)
 	for i in range(3):
 		yield(get_tree(), "idle_frame")
-	var mask_color = MASKS[mask]
+	var mask_color = MASKS[idx]
 	var mask_color_name = COLOR_NAMES[mask_color]
 	if mask_color == COLORS.SPECIAL:
 		details.bbcode_text = "[rainbow] Mask: %s[/rainbow]" % mask_color_name
-	elif mask_color == COLORS.NONE:
-		details.bbcode_text = " Mask: Alpha"
 	else:
-		details.bbcode_text = ("[color=%s] Mask: %s[/color]" % [mask_color_name, mask_color_name])
+		var color = COLOR_CODES[mask_color]
+		details.bbcode_text = ("[color=%s] Mask: %s[/color]" % [color, mask_color_name])
+
+
+func _debug(msg, data = null):
+	var DEBUG = true
+	if not DEBUG:
+		return
+	print("[CHALK++]: %s" % msg)
+	if data != null:
+		print(JSON.print(data, "\t"))

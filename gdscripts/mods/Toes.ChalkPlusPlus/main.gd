@@ -12,8 +12,8 @@
 
 extends Node
 
-onready var KeybindsAPI = get_node("/root/BlueberryWolfiAPIs/KeybindsAPI")
 onready var Players = get_node("/root/ToesSocks/Players")
+onready var Hotkeys = get_node("/root/ToesSocks/Hotkeys")
 onready var TackleBox = get_node("/root/TackleBox")
 
 onready var ChalkPP = preload("res://mods/Toes.ChalkPlusPlus/controls.gd").new()
@@ -40,11 +40,10 @@ func _ready():
 	init_keybind()
 
 	Players.connect("ingame", self, "_on_ingame")
-	KeybindsAPI.connect("_keybind_changed", self, "_on_keybind_changed")
 
 
-func _cycle_pattern():
-	emit_signal("cycle_chalk_mode")
+func _cycle_pattern(forward):
+	emit_signal("cycle_chalk_mode", forward)
 
 
 func _on_ingame():
@@ -72,22 +71,22 @@ func init_config() -> void:
 func save_config() -> void:
 	TackleBox.set_mod_config(MOD_ID, config)
 
-
 func init_keybind() -> void:
-	if KeybindsAPI.is_connected(CYCLE_ACTION_NAME + "_up", self, "_cycle_pattern"):
-		KeybindsAPI.disconnect(CYCLE_ACTION_NAME + "_up", self, "_cycle_pattern")
-	KeybindsAPI.register_keybind(
+	Hotkeys.connect(Hotkeys.add(
 		{
-			"action_name": CYCLE_ACTION_NAME,
-			"title": "Cycle Chalk++ Mode",
-			"key": config.modeSelectKey,
+			"name": CYCLE_ACTION_NAME,
+			"label": "Cycle Chalk++ Mode",
+			"key_code": config.modeSelectKey,
+			"modifiers": [],
+			"repeat": true,
 		}
-	)
-	KeybindsAPI.connect(CYCLE_ACTION_NAME + "_up", self, "_cycle_pattern")
-
-
-func _on_keybind_changed(action_name: String, title: String, event: InputEvent) -> void:
-	if not (action_name == CYCLE_ACTION_NAME and event is InputEventKey):
-		return
-	config.modeSelectKey = event.scancode
-	save_config()
+	), self, "_cycle_pattern", [true])
+	Hotkeys.connect(Hotkeys.add(
+		{
+			"name": CYCLE_ACTION_NAME + "_prev",
+			"label": "Cycle Chalk++ Mode" + " Prev.",
+			"key_code": config.modeSelectKey,
+			"modifiers": ["shift"],
+			"repeat": true,
+		}
+	), self, "_cycle_pattern", [false])

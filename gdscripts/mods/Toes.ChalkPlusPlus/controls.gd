@@ -16,9 +16,12 @@ signal changed_mode
 signal changed_mask
 signal applied_drawing
 
+const DEBUG := false
+
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var main = get_node("/root/ToesChalkPlusPlus")
+# var UI
 
 enum COLORS { WHITE, BLACK, RED, BLUE, YELLOW, SPECIAL, GREEN, NONE = -1 }
 const COLOR_NAMES = ["white", "black", "red", "blue", "yellow", "special", "green"]
@@ -168,6 +171,10 @@ func _notify(msg: String) -> void:
 func _on_ingame() -> void:
 	randomize()
 	get_canvasses()
+	# UI = get_node("/root/Chalk++ UI")
+	# UI.connect("scrolled_up", self, "cycle_chalk_mode", [false])
+	# UI.connect("scrolled_down", self, "cycle_chalk_mode", [true])
+
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	var audio = _get_random_sound()
 	paint.add_child(audio.scene.instance(), true)
@@ -264,7 +271,6 @@ func _play_random_section():
 	player.seek(start_time)
 	player.play()
 
-
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	paint.add_child(player, true)
 
@@ -293,11 +299,9 @@ func get_held_chalk_color() -> String:
 	return CHALK_ITEMS[chalk] if chalk != null else null
 
 
-func cycle_chalk_mode() -> void:
+func cycle_chalk_mode(forward = true) -> void:
 	if Players.is_busy():
 		return
-
-	var forward := not alt_is_held and not shift_is_held
 
 	var mode_to_set: int
 	if forward:
@@ -329,10 +333,20 @@ func set_mask_color(color: int = COLORS.NONE) -> void:
 	set_mask(selection)
 
 
+func _debug(msg, data = null):
+	if not DEBUG:
+		return
+	print("[CHALK++]: %s" % msg)
+	if data != null:
+		print(JSON.print(data, "\t"))
+
+
 func set_mask(selection: int) -> void:
 	if mask_selection == selection:
+		_debug("Skipping new mask selection", selection)
 		# TODO: Throttle instead to prevent dupe notifications
 		return
+	_debug("Setting new mask", selection)
 	mask_selection = selection
 	masking_color = masks[mask_selection]
 	var mask_name = mask_names[masking_color]
