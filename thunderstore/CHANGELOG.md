@@ -1,5 +1,13 @@
 # Changelog
 
+### [v1.6.0 - UI Enhancements](https://imgur.com/a/RO2yazb)
+
+- You can now pick your masking color by clicking on the Chalk++ button in the UI!
+  ![Masking menu](https://i.imgur.com/IilwvvG.png)
+- Removed unused stale dependency _BlueberryWolfiAPIs_
+
+#### Chalk++ now requires Socks >= v0.999.0 be sure to update that too!!
+
 ### v1.5.1
 
 - **New** Added an unlimited distance override for the limit at which players are were able to reach and draw on a canvas with chalk

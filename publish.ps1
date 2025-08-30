@@ -42,6 +42,10 @@ Compress-Archive -Path @(
    ".\thunderstore\LICENSE"
 ) -DestinationPath $zipPath -Force
 
+rm ".\thunderstore\GDWeave\mods\Chalk++.pck"
+rm ".\thunderstore\GDWeave\mods\Chalk++.dll"
+rm ".\thunderstore\GDWeave\mods\manifest.json"
+
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Build failed LASTEXITCODE=$LASTEXITCODE"
     exit $LASTEXITCODE
