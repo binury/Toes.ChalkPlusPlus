@@ -91,7 +91,7 @@ const mask_names := {
 	-1: "Alpha",
 	COLORS.WHITE: "White",
 	COLORS.BLACK: "Black",
-	COLORS.RED: "Red️",
+	COLORS.RED: "Red",
 	COLORS.GREEN: "Green",
 	COLORS.BLUE: "Blue",
 	COLORS.YELLOW: "Yellow",
