@@ -26,7 +26,8 @@ var default_config := {
 	"instantFill": true,
 	"useEraserAsChalk": true,
 	"experimentalStylusControls": false,
-	"drawingSounds": true
+	"drawingSounds": true,
+	"useFixedChalkTextures": true,
 }
 var config := {}
 
@@ -55,6 +56,13 @@ func _on_ingame():
 		add_child(ChalkPP, true)
 	ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn").instance()
 	get_tree().root.add_child(ChalkPP_UI, true)
+
+	if config["useFixedChalkTextures"]:
+		for canvas in ChalkPP.get_canvasses():
+			var mi: MeshInstance = get_tree().current_scene.get_node("Viewport/main/map/main_map/zones/main_zone/chalk_zones/chalk_canvas").get_child(2)
+			var mi_mat: SpatialMaterial = mi["material/0"]
+			mi_mat["flags_albedo_tex_force_srgb"] = true
+
 
 
 func init_config() -> void:

@@ -1,27 +1,13 @@
 # Chalk++
 
-<img src="https://i.imgur.com/8TRBtmH.jpeg" width=1024 alt="Chalk++ Banner Image">
+<img src="https://i.imgur.com/8TRBtmH.jpeg" width=512 alt="Chalk++ Banner Image">
+<br/>
 <a href="https://cara.app/purame"><small>Banner art by Ame</small></a>
 
 <br/>
+<br/>
 
 <img src="https://i.imgur.com/Grs6byr.png" height=128 alt="Chalk++ Logo">
-
----
-
-## ✨ Overview
-
-Chalk++ expands the creative chalk tools in **WEBFISHING** with new modes, shortcuts, and quality-of-life improvements.  
-With it, you can paint faster, erase smarter, and unlock new expressive patterns.
-
----
-
-## 📦 Installation
-
-> ⚠️ **Important:** Do not install Chalk++ alongside an older version.
-
-- **Manual:** Unzip the release into your `GDWeave` directory.
-- **Mod manager:** Import the `.zip` as a local mod (R2MM and similar supported).
 
 ---
 
@@ -41,7 +27,7 @@ With it, you can paint faster, erase smarter, and unlock new expressive patterns
 ### Controls
 
 1. Equip any chalk to start using Chalk++.
-2. Press `Y` to cycle modes. Hold `<Shift> + Y` to cycle backwards.
+2. Press `Y` to cycle modes forward. Press `<Shift> + Y` to cycle _backwards_.
 3. **Checkerboard brush offset:** Hold `<Shift>` while drawing.
 4. **Masking:** Hold `<Ctrl>` while using dithering brushes.
    - You can now pick your masking color by clicking on the Chalk++ button in the UI!
@@ -56,24 +42,25 @@ With it, you can paint faster, erase smarter, and unlock new expressive patterns
 
 ## ⚙️ Options
 
-Options can be changed in-game via **Tacklebox > Settings**,  
+Options can be changed in-game via `Settings > Mods > Chalk++`,  
 or by editing `GDWeave/configs/Toes.ChalkPlusPlus.json`.
 
 - `useEraserAsChalk` (default: `true`)
-  - `true`: Eraser acts like “brown chalk” with Chalk++ features.
+  - `true`: Eraser behaves identical to a “brown chalk” with Chalk++ brush features.
   - `false`: Use eraser normally while in any mode.
 - `drawingSounds` (default: `true`)
-  - Toggles immersive drawing sound effects.
+  - Hear immersive sound effects while drawing.
+- `useFixedChalkTextures` (default: `true`)
+  - "Fixes"/restores the chalk canvasses' original color palette
 
 ---
 
-## 📚 Project Links
 
-- [Changelog](https://thunderstore.io/c/webfishing/p/toes/Chalk_PlusPlus/changelog/)
-- [Contributing (PRs welcome)](https://github.com/binury/Toes.ChalkPlusPlus/pulls)
-- [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
-- [Feedback & Bug Reports (Discord)](https://discord.gg/kjf3FCAMDb)
-- [Roadmap & Feature Requests](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
+## [Changelog](https://thunderstore.io/c/webfishing/p/toes/Chalk_PlusPlus/changelog/)
+## [Contributing (PRs welcomed)](https://github.com/binury/Toes.ChalkPlusPlus/pulls)
+## [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
+## [Feedback & Bug Reports (Discord)](https://discord.gg/kjf3FCAMDb)
+## [Roadmap & Feature Requests](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
 
 ---
 

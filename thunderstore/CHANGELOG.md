@@ -1,5 +1,12 @@
 # Changelog
 
+### [v1.7.0 - Chalk Recoloring](https://github.com/binury/Toes.ChalkPlusPlus/releases/tag/v1.7.0) (Optional)
+
+![Chalk Colors](https://i.imgur.com/5US1yzy.png 'Restored chalk colors')
+![Colors](https://i.imgur.com/IzwTQcL.png)
+
+_Thanks to [Adamantris](https://thunderstore.io/c/webfishing/p/adamantris) for this feature suggestion!_
+
 ### [v1.6.0 - UI Enhancements](https://imgur.com/a/RO2yazb)
 
 - You can now pick your masking color by clicking on the Chalk++ button in the UI!
