@@ -130,8 +130,6 @@ func change_mode(mode: int) -> void:
 
 func change_mask(idx: int) -> void:
 	_debug("Got mask change signal for color idx", idx)
-	for i in range(3):
-		yield(get_tree(), "idle_frame")
 	var mask_color = MASKS[idx]
 	var mask_color_name = COLOR_NAMES[mask_color]
 	if mask_color == COLORS.SPECIAL:
