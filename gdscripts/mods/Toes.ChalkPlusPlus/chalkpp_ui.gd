@@ -59,13 +59,17 @@ func _ready():
 	details.bbcode_text = " Mask: [b]%s[/b]" % MASK_NAMES[COLORS.NONE]
 	self.visible = false
 
-#	ss = get_node("Info/Panel/VBoxContainer/ScrollSelector")
-#	ss.connect("scroll_started", self, "_on_scroll_started")
-
-	var color_menu: MenuButton = get_node("Info/Panel/VBoxContainer/MenuButton")
+	var mode_menu: MenuButton = get_node("Info/Panel/VBoxContainer/HBoxContainer/ModeButton")
+	var mode_picker := mode_menu.get_popup()
+	mode_picker.connect("id_pressed", self, "_handle_mode_menu_press")
+	for mode in range(main.ChalkPP.END_OF_MODES_INDEX + 1):
+		mode_picker.add_radio_check_item(
+			MODE_NAMES[mode],
+			mode
+		)
+	var color_menu: MenuButton = get_node("Info/Panel/VBoxContainer/HBoxContainer/MaskButton")
 	var color_picker := color_menu.get_popup()
 	color_picker.connect("id_pressed", self, "_handle_mask_menu_press")
-	# color_picker.add
 	for mask in MASKS:
 		color_picker.add_radio_check_item(
 			MASK_NAMES[mask],
@@ -79,6 +83,11 @@ func _handle_mask_menu_press(color: int) -> void:
 	color -= 1
 	_debug("MASK MENU PRESSED", color)
 	main.ChalkPP.set_mask_color(color)
+
+
+func _handle_mode_menu_press(mode: int) -> void:
+	_debug("MODE MENU PRESSED", mode)
+	main.ChalkPP.set_mode(mode)
 
 
 func _process(_d):
