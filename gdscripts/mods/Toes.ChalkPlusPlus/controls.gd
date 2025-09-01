@@ -192,8 +192,16 @@ func _on_outgame() -> void:
 	last_pressure_reading = 0.0
 	pen_is_connected = false
 
+func _physics_process(__: float) -> void:
+	# TODO: Find a better approach to ensure this applies
+	pass
+	# if is_instance_valid(chalk_canvas_node) and main.config["useFixedChalkTextures"]:
+	# 	var mi: MeshInstance = chalk_canvas_node.get_child(2)
+	# 	var mi_mat: SpatialMaterial = mi["material/0"]
+	# 	mi_mat["flags_albedo_tex_force_srgb"] = true
 
 func _process(delta):
+
 	# To prevent any accidents...
 	if not OS.is_window_focused():
 		# TODO: Test this approach for conflict with auto-fishing mod
@@ -289,8 +297,12 @@ func _stop_sounds() -> void:
 
 
 func activate_cpp(active: bool) -> void:
-	for chalk in chalk_canvasses:
-		chalk.paused = active
+	for canvas in chalk_canvasses:
+		canvas.paused = active
+		if main.config["useFixedChalkTextures"]:
+			var mi: MeshInstance = canvas.get_child(2)
+			var mi_mat: SpatialMaterial = mi["material/0"]
+			mi_mat["flags_albedo_tex_force_srgb"] = true
 	_set_spawn_prop_visibility(!active)
 
 
@@ -658,7 +670,10 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 			call_deferred("clear", canvasData)
 
 	Network._send_P2P_Packet(
-		{"type": "chalk_packet", "data": canvasData, "canvas_id": canvasActorID}, "peers", 2, Network.CHANNELS.CHALK
+		{"type": "chalk_packet", "data": canvasData, "canvas_id": canvasActorID},
+		"peers",
+		2,
+		Network.CHANNELS.CHALK
 	)
 
 
