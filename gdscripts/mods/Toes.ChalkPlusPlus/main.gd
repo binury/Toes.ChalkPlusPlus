@@ -25,6 +25,7 @@ var default_config := {
 	"modeSelectKey": 89,
 	"instantFill": true,
 	"useEraserAsChalk": true,
+	"eraserKey": KEY_E,
 	"experimentalStylusControls": false,
 	"drawingSounds": true,
 	"useFixedChalkTextures": true,
@@ -34,6 +35,7 @@ var config := {}
 var editor = OS.has_feature("editor")
 
 signal cycle_chalk_mode
+signal eraser_button_press
 
 
 func _ready():
@@ -47,6 +49,11 @@ func _cycle_pattern(forward):
 	emit_signal("cycle_chalk_mode", forward)
 
 
+func _activate_eraser():
+	# TODO
+	emit_signal("eraser_button_press")
+
+
 func _on_ingame():
 	if ChalkPP and ChalkPP.is_inside_tree():
 		ChalkPP.queue_free()
@@ -56,13 +63,6 @@ func _on_ingame():
 		add_child(ChalkPP, true)
 	ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn").instance()
 	get_tree().root.add_child(ChalkPP_UI, true)
-
-	if config["useFixedChalkTextures"]:
-		for canvas in ChalkPP.get_canvasses():
-			var mi: MeshInstance = get_tree().current_scene.get_node("Viewport/main/map/main_map/zones/main_zone/chalk_zones/chalk_canvas").get_child(2)
-			var mi_mat: SpatialMaterial = mi["material/0"]
-			mi_mat["flags_albedo_tex_force_srgb"] = true
-
 
 
 func init_config() -> void:
@@ -79,22 +79,26 @@ func init_config() -> void:
 func save_config() -> void:
 	TackleBox.set_mod_config(MOD_ID, config)
 
+
 func init_keybind() -> void:
-	Hotkeys.connect(Hotkeys.add(
-		{
-			"name": CYCLE_ACTION_NAME,
-			"label": "Cycle Chalk++ Mode",
-			"key_code": config.modeSelectKey,
-			"modifiers": [],
-			"repeat": true,
-		}
-	), self, "_cycle_pattern", [true])
-	Hotkeys.connect(Hotkeys.add(
-		{
-			"name": CYCLE_ACTION_NAME + "_prev",
-			"label": "Cycle Chalk++ Mode" + " Prev.",
-			"key_code": config.modeSelectKey,
-			"modifiers": ["shift"],
-			"repeat": true,
-		}
-	), self, "_cycle_pattern", [false])
+	Hotkeys.connect(Hotkeys.add({
+		"name": CYCLE_ACTION_NAME,
+		"label": "Cycle Chalk++ Mode",
+		"key_code": config.modeSelectKey,
+		"modifiers": [],
+		"repeat": true,
+	}), self, "_cycle_pattern", [true])
+	Hotkeys.connect(Hotkeys.add({
+		"name": CYCLE_ACTION_NAME + "_prev",
+		"label": "Cycle Chalk++ Mode" + " Prev.",
+		"key_code": config.modeSelectKey,
+		"modifiers": ["shift"],
+		"repeat": true,
+	}), self, "_cycle_pattern", [false])
+	Hotkeys.connect(Hotkeys.add({
+		"name": "cpp_erase",
+		"label": "Chalk++ Eraser Button",
+		"key_code": config.eraserKey,
+		"modifiers": [],
+		"repeat": false,
+	}), self, "_activate_eraser", [false])

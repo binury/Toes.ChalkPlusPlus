@@ -88,7 +88,8 @@ func _process(_d):
 	var HUD = $"/root/playerhud"
 	self.visible = main.ChalkPP.current_mode != MODES.NONE and !HUD.hud_hidden
 
-	var MASK_ACTIVE_MSG = " [color=black][ACTIVE][/color]"
+	var ERASER_ACTIVE_MSG = " [center][img=88]res://Assets/Textures/Items/toolicons22.png[/img][/center]"
+	var MASK_ACTIVE_MSG = " [ACTIVE]"
 	if (
 		main.ChalkPP.current_mode == MODES.MASK
 		or (
@@ -100,6 +101,13 @@ func _process(_d):
 			details.bbcode_text = details.bbcode_text + MASK_ACTIVE_MSG
 	else:
 		details.bbcode_text = details.bbcode_text.replace(MASK_ACTIVE_MSG, "")
+
+	if Input.is_action_pressed("cpp_erase"):
+		details.modulate = "#00ffffff"
+		title.bbcode_text = ERASER_ACTIVE_MSG
+	else:
+		details.modulate = "#ffffffff"
+		change_mode(main.ChalkPP.current_mode)
 
 
 func make_visible():

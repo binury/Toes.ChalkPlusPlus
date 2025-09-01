@@ -196,13 +196,18 @@ func _on_outgame() -> void:
 func _process(delta):
 	# To prevent any accidents...
 	if not OS.is_window_focused():
+		# TODO: Test this approach for conflict with auto-fishing mod
 		mouse1_is_held = false
+#		Input.action_release('primary_action')
 		alt_is_held = false
+		Input.action_release('move_sneak')
 		control_is_held = false
+		Input.action_release('move_walk')
 		shift_is_held = false
-	else:
-		alt_is_held = Input.is_key_pressed(KEY_ALT)
-		eraser_shortcut_requested = Input.is_key_pressed(KEY_E) and not Players.is_busy()
+		Input.action_release('move_sprint')
+
+	alt_is_held = Input.is_key_pressed(KEY_ALT)
+	eraser_shortcut_requested = Input.is_action_pressed("cpp_erase") and not Players.is_busy()
 	if Players.in_game == false:
 		return
 	local_player = Players.local_player
