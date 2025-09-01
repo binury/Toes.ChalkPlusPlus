@@ -1,5 +1,9 @@
 # Changelog
 
+### v2.0.0
+
+- Overlay UI is complete
+
 ### [v1.7.0 - Chalk Recoloring](https://github.com/binury/Toes.ChalkPlusPlus/releases/tag/v1.7.0) (Optional)
 
 ![Chalk Colors](https://i.imgur.com/5US1yzy.png 'Restored chalk colors')

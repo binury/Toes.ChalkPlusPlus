@@ -13,8 +13,11 @@
 
 ## 🎨 Usage
 
-- Default hotkey: `Y` (changeable in settings).
-- When active, benches and trees on canvases become invisible and intangible.
+![](https://i.imgur.com/XbRnmAv.png "UI Screenshot 1")
+![](https://i.imgur.com/BE6nrlc.png "UI Screenshot 2")
+
+- Open Chalk++ Overlay: `Y` (changeable in settings).
+- When active, benches and trees on canvases become invisible and intangible!
 
 ### Modes
 
