@@ -20,7 +20,7 @@ onready var title := $"Info/Panel/VBoxContainer/Title"
 onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
 
-onready var PlayerAPI = get_node("/root/ToesSocks/Players")
+onready var Players = get_node("/root/ToesSocks/Players")
 # var ss: ScrollContainer
 
 const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
@@ -89,7 +89,7 @@ func _handle_mode_menu_press(mode: int) -> void:
 
 
 func _process(_d):
-	if PlayerAPI.in_game == false:
+	if Players.in_game == false:
 		self.queue_free()
 
 	var HUD = $"/root/playerhud"
@@ -111,7 +111,7 @@ func _process(_d):
 	else:
 		details.bbcode_text = details.bbcode_text.replace(MASK_ACTIVE_MSG, "")
 
-	if Input.is_action_pressed("cpp_erase"):
+	if Input.is_action_pressed("cpp_erase") and not Players.is_busy():
 		details.modulate = "#00ffffff"
 		title.bbcode_text = ERASER_ACTIVE_MSG
 	else:
