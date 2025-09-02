@@ -21,7 +21,6 @@ onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
 
 onready var Players = get_node("/root/ToesSocks/Players")
-# var ss: ScrollContainer
 
 const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
 const COLORS := Chalk.COLORS
