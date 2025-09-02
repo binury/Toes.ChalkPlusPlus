@@ -16,14 +16,11 @@ signal scrolled_up
 signal scrolled_down
 signal mask_selected
 
-const DEBUG := false
-
 onready var title := $"Info/Panel/VBoxContainer/Title"
 onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
 
-onready var PlayerAPI = get_node("/root/ToesSocks/Players")
-# var ss: ScrollContainer
+onready var Players = get_node("/root/ToesSocks/Players")
 
 const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
 const COLORS := Chalk.COLORS
@@ -63,10 +60,7 @@ func _ready():
 	var mode_picker := mode_menu.get_popup()
 	mode_picker.connect("id_pressed", self, "_handle_mode_menu_press")
 	for mode in range(main.ChalkPP.END_OF_MODES_INDEX + 1):
-		mode_picker.add_radio_check_item(
-			MODE_NAMES[mode],
-			mode
-		)
+		mode_picker.add_radio_check_item(MODE_NAMES[mode], mode)
 	var color_menu: MenuButton = get_node("Info/Panel/VBoxContainer/HBoxContainer/MaskButton")
 	var color_picker := color_menu.get_popup()
 	color_picker.connect("id_pressed", self, "_handle_mask_menu_press")
@@ -91,11 +85,13 @@ func _handle_mode_menu_press(mode: int) -> void:
 
 
 func _process(_d):
-	if PlayerAPI.in_game == false:
+	if Players.in_game == false:
 		self.queue_free()
 
 	var HUD = $"/root/playerhud"
 	self.visible = main.ChalkPP.current_mode != MODES.NONE and !HUD.hud_hidden
+	if not self.visible:
+		return
 
 	var ERASER_ACTIVE_MSG = " [center][img=88]res://Assets/Textures/Items/toolicons22.png[/img][/center]"
 	var MASK_ACTIVE_MSG = " [ACTIVE]"
@@ -103,7 +99,7 @@ func _process(_d):
 		main.ChalkPP.current_mode == MODES.MASK
 		or (
 			main.ChalkPP.control_is_held
-			and main.ChalkPP.current_mode in [MODES.DITHER_CHECKER, MODES.DITHER_DOT, MODES.MIRROR]
+			and main.ChalkPP.current_mode in [MODES.DITHER_CHECKER, MODES.DITHER_DOT, MODES.LINE, MODES.MIRROR]
 		)
 	):
 		if details.bbcode_text.find(MASK_ACTIVE_MSG) == -1:
@@ -111,7 +107,7 @@ func _process(_d):
 	else:
 		details.bbcode_text = details.bbcode_text.replace(MASK_ACTIVE_MSG, "")
 
-	if Input.is_action_pressed("cpp_erase"):
+	if Input.is_action_pressed("cpp_erase") and not Players.is_busy():
 		details.modulate = "#00ffffff"
 		title.bbcode_text = ERASER_ACTIVE_MSG
 	else:
@@ -140,8 +136,7 @@ func change_mask(idx: int) -> void:
 
 
 func _debug(msg, data = null):
-	var DEBUG = true
-	if not DEBUG:
+	if not main.DEBUG:
 		return
 	print("[CHALK++]: %s" % msg)
 	if data != null:

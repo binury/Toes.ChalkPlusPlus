@@ -23,16 +23,17 @@ const MOD_ID = "Toes.ChalkPlusPlus"
 const CYCLE_ACTION_NAME = "cycle_chalk++_mode"
 var default_config := {
 	"modeSelectKey": 89,
-	"instantFill": true,
+	# "instantFill": true,
 	"useEraserAsChalk": true,
 	"eraserKey": KEY_E,
 	"experimentalStylusControls": false,
 	"drawingSounds": true,
 	"useFixedChalkTextures": true,
+	"glowInTheDarkChalk": true,
 }
 var config := {}
 
-var editor = OS.has_feature("editor")
+var DEBUG := OS.has_feature("editor") and false
 
 signal cycle_chalk_mode
 signal eraser_button_press

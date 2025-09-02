@@ -16,8 +16,6 @@ signal changed_mode
 signal changed_mask
 signal applied_drawing
 
-const DEBUG := false
-
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var main = get_node("/root/ToesChalkPlusPlus")
@@ -26,7 +24,7 @@ onready var main = get_node("/root/ToesChalkPlusPlus")
 enum COLORS { WHITE, BLACK, RED, BLUE, YELLOW, SPECIAL, GREEN, NONE = -1 }
 const COLOR_NAMES = ["white", "black", "red", "blue", "yellow", "special", "green"]
 
-enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, MIRROR }
+enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, LINE, MIRROR }
 const END_OF_MODES_INDEX = MODES.MIRROR
 const MODE_NAMES = {
 	MODES.NONE: "Off",
@@ -34,6 +32,7 @@ const MODE_NAMES = {
 	MODES.DITHER_DOT: "Dotting (1/9th) Brush",
 	MODES.MASK: "Freehand Masking",
 	MODES.FILL: "Bucket Fill",
+	MODES.LINE: "Line Tool",
 	MODES.MIRROR: "Symmetrical Mirroring",
 }
 
@@ -109,10 +108,23 @@ var alt_is_held := false
 var control_is_held := false
 var shift_is_held := false
 
+var last_hover_pos := Vector2.INF
+var last_hover_color := INF
+
 ## Shortcut is held
 var eraser_shortcut_requested := false
 ## Eraser is online
 var eraser_shortcut_active := false
+
+## Origin point of player's current line
+var line_tool_origin: Vector2 = Vector2.INF
+
+## The originating mode
+var temp_chalk_mode := -1
+## The canvas (id) to apply the preview
+var temp_chalk_canvas_id := -1
+## Preview tiles history, for undoing
+var temp_chalk_tiles := []
 
 
 func _ready():
@@ -150,7 +162,7 @@ func _input(event: InputEvent):
 			if pen_is_connected == false:
 				Chat.notify("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
 				Chat.write("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
-			print("last pressure reading %s" % last_pressure_reading)
+			_debug("last pressure reading %s" % last_pressure_reading)
 			pen_is_connected = true
 
 
@@ -166,6 +178,10 @@ func _unhandled_input(event: InputEvent) -> void:
 func _notify(msg: String) -> void:
 	return
 	Chat.notify("[Chalk++] " + msg)
+
+
+func vec2_has_inf(v: Vector2) -> bool:
+	return is_inf(v.x) or is_inf(v.y)
 
 
 func _on_ingame() -> void:
@@ -184,6 +200,7 @@ func _on_outgame() -> void:
 	chalk_canvasses.clear()
 	set_canvas(-1)
 	last_grid_pos = Vector2.INF
+	line_tool_origin = Vector2.INF
 
 	set_mode(MODES.NONE)
 	set_mask_color(COLORS.NONE)
@@ -192,27 +209,19 @@ func _on_outgame() -> void:
 	last_pressure_reading = 0.0
 	pen_is_connected = false
 
+
 func _physics_process(__: float) -> void:
-	# TODO: Find a better approach to ensure this applies
-	pass
-	# if is_instance_valid(chalk_canvas_node) and main.config["useFixedChalkTextures"]:
-	# 	var mi: MeshInstance = chalk_canvas_node.get_child(2)
-	# 	var mi_mat: SpatialMaterial = mi["material/0"]
-	# 	mi_mat["flags_albedo_tex_force_srgb"] = true
-
-func _process(delta):
-
 	# To prevent any accidents...
 	if not OS.is_window_focused():
 		# TODO: Test this approach for conflict with auto-fishing mod
 		mouse1_is_held = false
 #		Input.action_release('primary_action')
 		alt_is_held = false
-		Input.action_release('move_sneak')
+		Input.action_release("move_sneak")
 		control_is_held = false
-		Input.action_release('move_walk')
+		Input.action_release("move_walk")
 		shift_is_held = false
-		Input.action_release('move_sprint')
+		Input.action_release("move_sprint")
 
 	alt_is_held = Input.is_key_pressed(KEY_ALT)
 	eraser_shortcut_requested = Input.is_action_pressed("cpp_erase") and not Players.is_busy()
@@ -224,25 +233,12 @@ func _process(delta):
 	if not paint_node:
 		return
 
-	if (
-		main.config["experimentalStylusControls"]
-		and pen_is_connected
-		and mouse1_is_held
-		and current_mode != MODES.NONE
-		and false
-	):  # TODO
-		var dotting_pressure_limit = 0.01
-		var checker_pressure_limit = 0.25
-		var masking_pressure_limit = 0.5
-		var fill_pressure_limit = 0.8
-		if last_pressure_reading > fill_pressure_limit:
-			set_mode(MODES.FILL)
-		elif last_pressure_reading > masking_pressure_limit:
-			set_mode(MODES.MASK)
-		elif last_pressure_reading > checker_pressure_limit:
-			set_mode(MODES.DITHER_CHECKER)
-		elif last_pressure_reading > dotting_pressure_limit:
-			set_mode(MODES.DITHER_DOT)
+	if current_mode != MODES.LINE:
+		_reset_line_origin()
+		# _undo_temp_paint()
+
+	if temp_chalk_mode != current_mode:
+		_undo_temp_paint()
 
 	mouse_pos = paint_node.global_transform.origin
 	var canvas_id = find_canvas_id(mouse_pos)
@@ -263,7 +259,26 @@ func _process(delta):
 			and (held_chalk_color == null or (held_chalk_color > -1 or should_use_eraser_as_chalk))
 		)
 	)
-	if chalk_canvas_node.paused:
+	var cpp_active = chalk_canvas_node.paused
+	var hovered_canvas_vector = _get_hovered_canvas_vector()
+	if vec2_has_inf(hovered_canvas_vector):
+		_undo_temp_paint()  # If any
+		return
+
+	var should_render_new_preview = (
+		cpp_active
+		and held_chalk_color != null
+		and current_mode == MODES.LINE
+		and (!last_hover_pos.is_equal_approx(hovered_canvas_vector) or !last_hover_color == held_chalk_color)
+		and not alt_is_held
+	)
+	last_hover_pos = hovered_canvas_vector
+	if should_render_new_preview:
+		_undo_temp_paint()
+		_preview_paint(draw_line([[hovered_canvas_vector.x, hovered_canvas_vector.y, held_chalk_color]]), canvas_id)
+		last_hover_color = held_chalk_color
+
+	if cpp_active:
 		apply_chalkpp()
 
 
@@ -299,10 +314,11 @@ func _stop_sounds() -> void:
 func activate_cpp(active: bool) -> void:
 	for canvas in chalk_canvasses:
 		canvas.paused = active
-		if main.config["useFixedChalkTextures"]:
-			var mi: MeshInstance = canvas.get_child(2)
-			var mi_mat: SpatialMaterial = mi["material/0"]
-			mi_mat["flags_albedo_tex_force_srgb"] = true
+		# Optional Features:
+		var mi: MeshInstance = canvas.get_child(2)
+		var mi_mat: SpatialMaterial = mi["material/0"]
+		mi_mat["flags_albedo_tex_force_srgb"] = main.config.get("useFixedChalkTextures", false)
+		mi_mat["flags_unshaded"] = main.config.get("glowInTheDarkChalk", true)
 	_set_spawn_prop_visibility(!active)
 
 
@@ -351,7 +367,7 @@ func set_mask_color(color: int = COLORS.NONE) -> void:
 
 
 func _debug(msg, data = null):
-	if not DEBUG:
+	if not main.DEBUG:
 		return
 	print("[CHALK++]: %s" % msg)
 	if data != null:
@@ -428,6 +444,18 @@ func get_canvas_midpoint() -> int:
 			return 90
 
 
+func _get_hovered_canvas_vector() -> Vector2:
+	mouse_pos = paint_node.global_transform.origin
+	var grid_diff = chalk_canvas_node.global_transform.origin - mouse_pos
+	if grid_diff.length() > chalk_canvas_node.canvas_size:
+		return Vector2.INF
+
+	var x = int(floor(100 - grid_diff.x * 10))
+	var z = int(floor(100 - grid_diff.z * 10))
+	var pos := Vector2(x, z)
+	return pos
+
+
 func apply_chalkpp():
 	if not mouse1_is_held:
 		last_grid_pos = Vector2.INF
@@ -443,6 +471,7 @@ func apply_chalkpp():
 		elif control_is_held:
 			size = 1
 
+	# TODO: Refactor this out - duplicate code in _get_hovered_canvas_vector
 	mouse_pos = paint_node.global_transform.origin
 
 	var grid_diff = chalk_canvas_node.global_transform.origin - mouse_pos
@@ -452,7 +481,7 @@ func apply_chalkpp():
 
 	var x = int(floor(100 - grid_diff.x * 10))
 	var z = int(floor(100 - grid_diff.z * 10))
-	var new_grid_pos = Vector2(x, z)
+	var new_grid_pos := Vector2(x, z)
 
 	var data := []
 
@@ -481,10 +510,14 @@ func apply_chalkpp():
 		_update_canvas_node(data, chalk_canvas_id)
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
-	elif get_held_chalk_color() != null and mouse1_is_held:
+
+	if get_held_chalk_color() == null:
+		return
+	elif mouse1_is_held:
+		var cell = data[0]
+
 		# Masking color picker
 		if alt_is_held:
-			var cell = data[0]
 			var current_cell_color = TileMap_node.get_cell(cell[0], cell[1])
 			set_mask_color(current_cell_color)
 			return
@@ -502,15 +535,38 @@ func apply_chalkpp():
 			MODES.FILL:
 				var painting = paint_bucket(data)  # TODO Throttling
 
+			MODES.LINE:
+				if vec2_has_inf(line_tool_origin):
+					_set_line_origin(Vector2(cell[0], cell[1]))
+					_debug("Line origin was set to a new pos")
+					data = draw_line(data)
+				else:
+					data = []
+					# (Waiting on endpoint, mouse button release)
 			MODES.MIRROR:
 				data = mirror_tool(data)
-
-			_:
-				breakpoint
 
 		emit_signal("applied_drawing")
 		_update_canvas_node(data, chalk_canvas_id)
 		last_grid_pos = new_grid_pos
+	else:
+		# Mouse up
+		match current_mode:
+			MODES.DITHER_DOT:
+				pass
+			MODES.DITHER_CHECKER:
+				pass
+			MODES.MASK:
+				pass
+			MODES.FILL:
+				pass
+			MODES.MIRROR:
+				pass
+			MODES.LINE:
+				if not(vec2_has_inf(line_tool_origin) or temp_chalk_tiles.empty()):
+					data = _apply_temp_paint()
+					_reset_line_origin()
+					_update_canvas_node(data, chalk_canvas_id)
 
 
 func checkerboard_brush(transformations, offset = shift_is_held):
@@ -549,7 +605,7 @@ func masking_tool(data: Array) -> Array:
 		var x = node[0]
 		var y = node[1]
 		var current_cell_color = TileMap_node.get_cell(x, y)
-		if get_held_chalk() != "chalk_eraser" and current_cell_color != masking_color:
+		if current_cell_color != masking_color:
 			continue
 		result.append(node)
 	return result
@@ -618,6 +674,60 @@ func paint_bucket(transformations: Array) -> Array:
 	return transformations
 
 
+func _set_line_origin(origin: Vector2):
+	_debug("Setting line origin %s, %s" % [origin.x, origin.y])
+	line_tool_origin = origin
+
+
+func _reset_line_origin():
+	self.line_tool_origin = Vector2.INF
+
+
+func draw_line(transformations: Array) -> Array:
+	## [x, y, color]
+	var cell = transformations[0]
+	var cellV = Vector2(cell[0], cell[1])
+	var color = cell[2]
+	var result := []
+
+	if vec2_has_inf(cellV):
+		breakpoint
+		return []
+
+	# Start or reset line origin
+	if vec2_has_inf(line_tool_origin):
+		result.append([cellV.x, cellV.y, color])
+		return result
+
+	var x0 = line_tool_origin.x
+	var y0 = line_tool_origin.y
+	var x1 = cell[0]
+	var y1 = cell[1]
+
+	var dx = abs(x1 - x0)
+	var dy = abs(y1 - y0)
+	var sx = 1 if x0 < x1 else -1
+	var sy = 1 if y0 < y1 else -1
+	var err = dx - dy
+
+	while x0 != x1 or y0 != y1:
+		# Masking
+		if control_is_held and not shift_is_held:
+			var current_cell_color = TileMap_node.get_cell(x0, y0)
+			if current_cell_color == masking_color:
+				result.append([x0, y0, color])
+		else:
+			result.append([x0, y0, color])
+		var e2 = 2 * err
+		if e2 > -dy:
+			err -= dy
+			x0 += sx
+		if e2 < dx:
+			err += dx
+			y0 += sy
+	return result
+
+
 func mirror_tool(transformations: Array) -> Array:
 	var result := []
 	for entry in transformations:
@@ -626,7 +736,6 @@ func mirror_tool(transformations: Array) -> Array:
 		var color = entry[2]
 
 		var x_mid = get_canvas_midpoint()
-#		var y_mid = get_canvas_midpoint()
 		var x_diff = abs(x_mid - x)
 		var t1 = [x_mid - x_diff, y, color]
 		var t2 = [x_mid + x_diff, y, color]
@@ -642,12 +751,48 @@ func mirror_tool(transformations: Array) -> Array:
 		result.append(t1)
 		result.append(t2)
 
-#		var y_diff = abs(y_mid - y)
-#		result.append([x, y_mid - y_diff, color])
-#		result.append([x, y_mid + y_diff, color])
-
-#		result.append(entry)
 	return result
+
+
+func _preview_paint(transformations: Array, canvas_id: int):
+	if transformations.empty():
+		# TODO: Can maybe skip this if no need to avoid changing temp_chalk_mode
+		return
+	temp_chalk_mode = current_mode
+	for painting in transformations:
+		var v = Vector2(painting[0], painting[1])
+		temp_chalk_tiles.append([v, [TileMap_node.get_cellv(v), painting[2]]])
+		_debug("Temp chalk tiles %s %s %s" % [painting[0], painting[1], painting[2]])
+		TileMap_node.set_cellv(v, painting[2])
+
+
+func _undo_temp_paint():
+	while temp_chalk_tiles.size() > 0:
+		var temp_paint_event: Array = temp_chalk_tiles.pop_back()
+		var pos = temp_paint_event[0]
+		var original_tile = temp_paint_event[1][0]
+		var temp_tile = temp_paint_event[1][1]
+		var current_tile = TileMap_node.get_cellv(pos)
+		if temp_tile == current_tile:
+			TileMap_node.set_cellv(pos, original_tile)
+			_debug("Undoing temp chalk  %s %s %s" % [pos.x, pos.y, temp_tile])
+		else:
+			# Abort!
+			_debug("Skipping changed paint??? %s %s" % [pos.x, pos.y])
+			continue
+
+
+func _apply_temp_paint() -> Array:
+	var transformations := []
+	while temp_chalk_tiles.size() > 0:
+		var temp_paint_event: Array = temp_chalk_tiles.pop_back()
+		var pos = temp_paint_event[0]
+		var temp_tile = temp_paint_event[1][1]
+		var current_tile = TileMap_node.get_cellv(pos)
+		_debug("Applying temp chalk  %s %s %s" % [pos.x, pos.y, temp_tile])
+		transformations.push_back([pos.x, pos.y, temp_tile])
+	return transformations
+	temp_chalk_canvas_id = -1
 
 
 func _update_canvas_node(transformations: Array, canvasActorID: int):
