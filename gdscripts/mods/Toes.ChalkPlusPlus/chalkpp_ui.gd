@@ -60,10 +60,7 @@ func _ready():
 	var mode_picker := mode_menu.get_popup()
 	mode_picker.connect("id_pressed", self, "_handle_mode_menu_press")
 	for mode in range(main.ChalkPP.END_OF_MODES_INDEX + 1):
-		mode_picker.add_radio_check_item(
-			MODE_NAMES[mode],
-			mode
-		)
+		mode_picker.add_radio_check_item(MODE_NAMES[mode], mode)
 	var color_menu: MenuButton = get_node("Info/Panel/VBoxContainer/HBoxContainer/MaskButton")
 	var color_picker := color_menu.get_popup()
 	color_picker.connect("id_pressed", self, "_handle_mask_menu_press")
@@ -102,7 +99,7 @@ func _process(_d):
 		main.ChalkPP.current_mode == MODES.MASK
 		or (
 			main.ChalkPP.control_is_held
-			and main.ChalkPP.current_mode in [MODES.DITHER_CHECKER, MODES.DITHER_DOT, MODES.MIRROR]
+			and main.ChalkPP.current_mode in [MODES.DITHER_CHECKER, MODES.DITHER_DOT, MODES.LINE, MODES.MIRROR]
 		)
 	):
 		if details.bbcode_text.find(MASK_ACTIVE_MSG) == -1:

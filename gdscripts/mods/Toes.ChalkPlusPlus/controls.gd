@@ -270,7 +270,6 @@ func _physics_process(__: float) -> void:
 		and held_chalk_color != null
 		and current_mode == MODES.LINE
 		and (!last_hover_pos.is_equal_approx(hovered_canvas_vector) or !last_hover_color == held_chalk_color)
-		and not mouse1_is_held
 		and not alt_is_held
 	)
 	last_hover_pos = hovered_canvas_vector
@@ -511,7 +510,10 @@ func apply_chalkpp():
 		_update_canvas_node(data, chalk_canvas_id)
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
-	elif get_held_chalk_color() != null and mouse1_is_held:
+
+	if get_held_chalk_color() == null:
+		return
+	elif mouse1_is_held:
 		var cell = data[0]
 
 		# Masking color picker
@@ -534,26 +536,37 @@ func apply_chalkpp():
 				var painting = paint_bucket(data)  # TODO Throttling
 
 			MODES.LINE:
-				if vec2_has_inf(line_tool_origin) or (control_is_held and shift_is_held):
+				if vec2_has_inf(line_tool_origin):
 					_set_line_origin(Vector2(cell[0], cell[1]))
 					_debug("Line origin was set to a new pos")
 					data = draw_line(data)
 				else:
-					data = _apply_temp_paint()
-					if shift_is_held:
-						# Retain original origin point
-						# rather than adding a segment
-						_set_line_origin(line_tool_origin)
-						# (Yes this redundant but backwards conditional reads like shit)
-					else:
-						_set_line_origin(Vector2(cell[0], cell[1]))
-
+					data = []
+					# (Waiting on endpoint, mouse button release)
 			MODES.MIRROR:
 				data = mirror_tool(data)
 
 		emit_signal("applied_drawing")
 		_update_canvas_node(data, chalk_canvas_id)
 		last_grid_pos = new_grid_pos
+	else:
+		# Mouse up
+		match current_mode:
+			MODES.DITHER_DOT:
+				pass
+			MODES.DITHER_CHECKER:
+				pass
+			MODES.MASK:
+				pass
+			MODES.FILL:
+				pass
+			MODES.MIRROR:
+				pass
+			MODES.LINE:
+				if not(vec2_has_inf(line_tool_origin) or temp_chalk_tiles.empty()):
+					data = _apply_temp_paint()
+					_reset_line_origin()
+					_update_canvas_node(data, chalk_canvas_id)
 
 
 func checkerboard_brush(transformations, offset = shift_is_held):
@@ -682,7 +695,7 @@ func draw_line(transformations: Array) -> Array:
 		return []
 
 	# Start or reset line origin
-	if vec2_has_inf(line_tool_origin) or (control_is_held and shift_is_held):
+	if vec2_has_inf(line_tool_origin):
 		result.append([cellV.x, cellV.y, color])
 		return result
 
