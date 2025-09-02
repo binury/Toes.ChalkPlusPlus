@@ -16,7 +16,7 @@ signal changed_mode
 signal changed_mask
 signal applied_drawing
 
-const DEBUG := false
+var DEBUG := OS.has_feature("edtior") and true
 
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Chat = get_node("/root/ToesSocks/Chat")
@@ -26,7 +26,7 @@ onready var main = get_node("/root/ToesChalkPlusPlus")
 enum COLORS { WHITE, BLACK, RED, BLUE, YELLOW, SPECIAL, GREEN, NONE = -1 }
 const COLOR_NAMES = ["white", "black", "red", "blue", "yellow", "special", "green"]
 
-enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, MIRROR }
+enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, LINE, MIRROR }
 const END_OF_MODES_INDEX = MODES.MIRROR
 const MODE_NAMES = {
 	MODES.NONE: "Off",
@@ -34,6 +34,7 @@ const MODE_NAMES = {
 	MODES.DITHER_DOT: "Dotting (1/9th) Brush",
 	MODES.MASK: "Freehand Masking",
 	MODES.FILL: "Bucket Fill",
+	MODES.LINE: "Line Tool",
 	MODES.MIRROR: "Symmetrical Mirroring",
 }
 
@@ -114,6 +115,11 @@ var eraser_shortcut_requested := false
 ## Eraser is online
 var eraser_shortcut_active := false
 
+var line_tool_origin: Vector2 = Vector2.INF
+
+var temp_chalk_canvas_id: int
+var temp_chalk_tiles := []
+
 
 func _ready():
 	main.connect("cycle_chalk_mode", self, "cycle_chalk_mode")
@@ -184,6 +190,7 @@ func _on_outgame() -> void:
 	chalk_canvasses.clear()
 	set_canvas(-1)
 	last_grid_pos = Vector2.INF
+	line_tool_origin = Vector2.INF
 
 	set_mode(MODES.NONE)
 	set_mask_color(COLORS.NONE)
@@ -191,6 +198,7 @@ func _on_outgame() -> void:
 	# Just in case?
 	last_pressure_reading = 0.0
 	pen_is_connected = false
+
 
 func _physics_process(__: float) -> void:
 	# TODO: Find a better approach to ensure this applies
@@ -200,19 +208,19 @@ func _physics_process(__: float) -> void:
 	# 	var mi_mat: SpatialMaterial = mi["material/0"]
 	# 	mi_mat["flags_albedo_tex_force_srgb"] = true
 
-func _process(delta):
 
+func _process(delta):
 	# To prevent any accidents...
 	if not OS.is_window_focused():
 		# TODO: Test this approach for conflict with auto-fishing mod
 		mouse1_is_held = false
 #		Input.action_release('primary_action')
 		alt_is_held = false
-		Input.action_release('move_sneak')
+		Input.action_release("move_sneak")
 		control_is_held = false
-		Input.action_release('move_walk')
+		Input.action_release("move_walk")
 		shift_is_held = false
-		Input.action_release('move_sprint')
+		Input.action_release("move_sprint")
 
 	alt_is_held = Input.is_key_pressed(KEY_ALT)
 	eraser_shortcut_requested = Input.is_action_pressed("cpp_erase") and not Players.is_busy()
@@ -224,25 +232,8 @@ func _process(delta):
 	if not paint_node:
 		return
 
-	if (
-		main.config["experimentalStylusControls"]
-		and pen_is_connected
-		and mouse1_is_held
-		and current_mode != MODES.NONE
-		and false
-	):  # TODO
-		var dotting_pressure_limit = 0.01
-		var checker_pressure_limit = 0.25
-		var masking_pressure_limit = 0.5
-		var fill_pressure_limit = 0.8
-		if last_pressure_reading > fill_pressure_limit:
-			set_mode(MODES.FILL)
-		elif last_pressure_reading > masking_pressure_limit:
-			set_mode(MODES.MASK)
-		elif last_pressure_reading > checker_pressure_limit:
-			set_mode(MODES.DITHER_CHECKER)
-		elif last_pressure_reading > dotting_pressure_limit:
-			set_mode(MODES.DITHER_DOT)
+	if current_mode != MODES.LINE:
+		line_tool_origin = Vector2.INF
 
 	mouse_pos = paint_node.global_transform.origin
 	var canvas_id = find_canvas_id(mouse_pos)
@@ -502,6 +493,9 @@ func apply_chalkpp():
 			MODES.FILL:
 				var painting = paint_bucket(data)  # TODO Throttling
 
+			MODES.LINE:
+				data = draw_line(data)
+
 			MODES.MIRROR:
 				data = mirror_tool(data)
 
@@ -616,6 +610,51 @@ func paint_bucket(transformations: Array) -> Array:
 		queue.append(Vector2(cx, cy + 1))
 		queue.append(Vector2(cx, cy - 1))
 	return transformations
+
+
+func _reset_line_origin():
+	self.line_tool_origin = Vector2.INF
+
+
+func draw_line(transformations: Array) -> Array:
+	## [x, y, color]
+	var cell = transformations[0]
+	var color = cell[2]
+	var result := []
+
+	# Reset line origin
+	if is_inf(line_tool_origin.x) or control_is_held:
+		line_tool_origin = Vector2(cell[0], cell[1])
+		result.append([line_tool_origin.x, line_tool_origin.y, color])
+		return result
+
+
+	var x0 = line_tool_origin.x
+	var y0 = line_tool_origin.y
+	var x1 = cell[0]
+	var y1 = cell[1]
+
+	var dx = abs(x1 - x0)
+	var dy = abs(y1 - y0)
+	var sx = 1 if x0 < x1 else -1
+	var sy = 1 if y0 < y1 else -1
+	var err = dx - dy
+
+	while x0 != x1 or y0 != y1:
+		result.append([x0, y0, color])
+		var e2 = 2 * err
+		if e2 > -dy:
+			err -= dy
+			x0 += sx
+		if e2 < dx:
+			err += dx
+			y0 += sy
+
+	# Draw next line from original vector
+	# rather than adding a segment
+	if not shift_is_held:
+		line_tool_origin = Vector2(x1, y1)
+	return result
 
 
 func mirror_tool(transformations: Array) -> Array:
