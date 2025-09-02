@@ -96,6 +96,8 @@ func _process(_d):
 
 	var HUD = $"/root/playerhud"
 	self.visible = main.ChalkPP.current_mode != MODES.NONE and !HUD.hud_hidden
+	if not self.visible:
+		return
 
 	var ERASER_ACTIVE_MSG = " [center][img=88]res://Assets/Textures/Items/toolicons22.png[/img][/center]"
 	var MASK_ACTIVE_MSG = " [ACTIVE]"
