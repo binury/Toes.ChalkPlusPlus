@@ -13,8 +13,8 @@
 
 ## 🎨 Usage
 
-![](https://i.imgur.com/XbRnmAv.png "UI Screenshot 1")
-![](https://i.imgur.com/BE6nrlc.png "UI Screenshot 2")
+![](https://i.imgur.com/XbRnmAv.png 'UI Screenshot 1')
+![](https://i.imgur.com/BE6nrlc.png 'UI Screenshot 2')
 
 - Open Chalk++ Overlay: `Y` (changeable in settings).
 - When active, benches and trees on canvases become invisible and intangible!
@@ -41,6 +41,36 @@
 6. **Quick erase:** Press `E` to erase without equipping the eraser.
    - Mode effects (mirror, brush patterns, etc.) still apply!
 
+#### Line tool
+
+The default behavior of line tool is to _chain lines_
+
+```
+A -> B -> C -> D
+```
+
+wherever you click it draws a line from the last click to there. Straightforward literally and figuratively.
+
+**But** there are _two_ other controls for you to know:
+
+**1. To end a chain and start a new line**
+
+```
+A->B->C  D->E
+```
+
+Hold down `<Ctrl>` to (stop chaining and) forcibly set the starting point a **new **line
+
+**2. To draw a bunch of lines around a single point,**
+
+```
+B - A - D
+    |
+    C
+```
+
+- Hold down `<Shift>` when adding a line to retain the current segment as the origin point for your next line
+
 ---
 
 ## ⚙️ Options
@@ -48,32 +78,36 @@
 Options can be changed in-game via `Settings > Mods > Chalk++`,  
 or by editing `GDWeave/configs/Toes.ChalkPlusPlus.json`.
 
-- `useEraserAsChalk` (default: `true`)
-  - `true`: Eraser behaves identical to a “brown chalk” with Chalk++ brush features.
-  - `false`: Use eraser normally while in any mode.
-- `drawingSounds` (default: `true`)
-  - Hear immersive sound effects while drawing.
+1. `useEraserAsChalk` (default: `true`)
+    - `true`: Eraser behaves identical to a “brown chalk” with Chalk++ brush features.
+    - `false`: Use eraser normally while in any mode.
+2. `drawingSounds` (default: `true`)
+    - Hear immersive sound effects while drawing.
 
 <img src="https://i.imgur.com/cxETH3c.png">
 <br/>
 
-- `useFixedChalkTextures` (default: `true`)
-  - "Fixes"/restores the chalk canvasses' original color palette
+3. `useFixedChalkTextures` (default: `true`)
+    - Restores the original RGB color palette texture to canvasses
+    - Fixes a bug in the canvas tile's material/texture that causes it to _normally_ appear over-saturated (e.g., red looks magenta)
 
 <img src="https://i.imgur.com/sj9jlJt.png" width="650">
 <br/>
 
-- `glowInTheDarkChalk` (default: `true`)
+4. `glowInTheDarkChalk` (default: `true`)
   - Changes chalk to be unaffected by lighting/shadows
   - Primarily for usage with daytime lighting changing mods such as [Daylight](https://thunderstore.io/c/webfishing/p/baltdev/Daylight/)
 
 ---
 
-
 ## [Changelog](https://thunderstore.io/c/webfishing/p/toes/Chalk_PlusPlus/changelog/)
+
 ## [Contributing (PRs welcomed)](https://github.com/binury/Toes.ChalkPlusPlus/pulls)
+
 ## [Known Issues](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen)
+
 ## [Feedback & Bug Reports (Discord)](https://discord.gg/kjf3FCAMDb)
+
 ## [Roadmap & Feature Requests](https://github.com/binury/Toes.ChalkPlusPlus/issues?q=sort%3Aupdated-desc%20is%3Aissue%20is%3Aopen%20label%3Aenhancement)
 
 ---
