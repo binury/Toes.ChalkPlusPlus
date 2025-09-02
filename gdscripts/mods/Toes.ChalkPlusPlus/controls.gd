@@ -290,10 +290,11 @@ func _stop_sounds() -> void:
 func activate_cpp(active: bool) -> void:
 	for canvas in chalk_canvasses:
 		canvas.paused = active
-		if main.config["useFixedChalkTextures"]:
-			var mi: MeshInstance = canvas.get_child(2)
-			var mi_mat: SpatialMaterial = mi["material/0"]
-			mi_mat["flags_albedo_tex_force_srgb"] = true
+		# Optional Features:
+		var mi: MeshInstance = canvas.get_child(2)
+		var mi_mat: SpatialMaterial = mi["material/0"]
+		mi_mat["flags_albedo_tex_force_srgb"] = main.config.get("useFixedChalkTextures", false)
+		mi_mat["flags_unshaded"] = main.config.get("glowInTheDarkChalk", true)
 	_set_spawn_prop_visibility(!active)
 
 

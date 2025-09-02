@@ -53,8 +53,19 @@ or by editing `GDWeave/configs/Toes.ChalkPlusPlus.json`.
   - `false`: Use eraser normally while in any mode.
 - `drawingSounds` (default: `true`)
   - Hear immersive sound effects while drawing.
+
+<img src="https://i.imgur.com/cxETH3c.png">
+<br/>
+
 - `useFixedChalkTextures` (default: `true`)
   - "Fixes"/restores the chalk canvasses' original color palette
+
+<img src="https://i.imgur.com/sj9jlJt.png" width="650">
+<br/>
+
+- `glowInTheDarkChalk` (default: `true`)
+  - Changes chalk to be unaffected by lighting/shadows
+  - Primarily for usage with daytime lighting changing mods such as [Daylight](https://thunderstore.io/c/webfishing/p/baltdev/Daylight/)
 
 ---
 
