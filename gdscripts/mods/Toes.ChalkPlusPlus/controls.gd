@@ -16,8 +16,6 @@ signal changed_mode
 signal changed_mask
 signal applied_drawing
 
-var DEBUG := OS.has_feature("edtior") and true
-
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var main = get_node("/root/ToesChalkPlusPlus")
@@ -343,7 +341,7 @@ func set_mask_color(color: int = COLORS.NONE) -> void:
 
 
 func _debug(msg, data = null):
-	if not DEBUG:
+	if not main.DEBUG:
 		return
 	print("[CHALK++]: %s" % msg)
 	if data != null:

@@ -16,8 +16,6 @@ signal scrolled_up
 signal scrolled_down
 signal mask_selected
 
-const DEBUG := false
-
 onready var title := $"Info/Panel/VBoxContainer/Title"
 onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
@@ -142,8 +140,7 @@ func change_mask(idx: int) -> void:
 
 
 func _debug(msg, data = null):
-	var DEBUG = true
-	if not DEBUG:
+	if not main.DEBUG:
 		return
 	print("[CHALK++]: %s" % msg)
 	if data != null:
