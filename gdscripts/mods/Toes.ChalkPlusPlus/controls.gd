@@ -605,7 +605,7 @@ func masking_tool(data: Array) -> Array:
 		var x = node[0]
 		var y = node[1]
 		var current_cell_color = TileMap_node.get_cell(x, y)
-		if get_held_chalk() != "chalk_eraser" and current_cell_color != masking_color:
+		if current_cell_color != masking_color:
 			continue
 		result.append(node)
 	return result
