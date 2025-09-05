@@ -18,6 +18,7 @@ onready var TackleBox = get_node("/root/TackleBox")
 
 onready var ChalkPP = preload("res://mods/Toes.ChalkPlusPlus/controls.gd").new()
 onready var ChalkPP_UI = preload("res://mods/Toes.ChalkPlusPlus/chalkpp_ui.tscn").instance()
+var color_db = preload("res://mods/Toes.ChalkPlusPlus/resources/color_names.tres")
 
 const MOD_ID = "Toes.ChalkPlusPlus"
 const CYCLE_ACTION_NAME = "cycle_chalk++_mode"

@@ -21,6 +21,9 @@ onready var details := $"Info/Panel/VBoxContainer/Details"
 onready var main = $"/root/ToesChalkPlusPlus"
 
 onready var Players = get_node("/root/ToesSocks/Players")
+onready var ColorfulChalk = get_node_or_null("/root/adamantrisChromaChalk")
+onready var CC_API = ColorfulChalk.get_node_or_null("Color_API")
+# /root/adamantrisColorfulChalk/Color_API
 
 const Chalk := preload("res://mods/Toes.ChalkPlusPlus/controls.gd")
 const COLORS := Chalk.COLORS

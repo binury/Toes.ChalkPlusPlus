@@ -19,6 +19,11 @@ signal applied_drawing
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var main = get_node("/root/ToesChalkPlusPlus")
+
+onready var Lure = get_node_or_null("/root/SulayreLure")
+onready var ChromaChalk = get_node_or_null("/root/adamantrisChromaChalk")
+onready var CC_API = ChromaChalk.get_node_or_null("Color_API")
+# /root/adamantrisColorfulChalk/Color_API
 # var UI
 
 enum COLORS { WHITE, BLACK, RED, BLUE, YELLOW, SPECIAL, GREEN, NONE = -1 }
@@ -64,7 +69,7 @@ var audio_scenes = {
 	"pencil": {"scene": pencil_scene, "db": -14.0},
 }
 var player
-const CHALK_ITEMS := {
+var CHALK_ITEMS := {
 	"chalk_eraser": COLORS.NONE,
 	"chalk_white": COLORS.WHITE,
 	"chalk_black": COLORS.BLACK,
@@ -96,12 +101,20 @@ const mask_names := {
 	COLORS.YELLOW: "Yellow",
 	COLORS.SPECIAL: "Special",
 }
+var extra_color_names := {
+
+}
+
 ## Index of color
 var mask_selection := 0
 ## Masking color / chalk canvas value
 var masking_color: int = COLORS.NONE
 
 var current_mode: int = MODES.NONE
+
+export var chroma_chalk_tile: int = INF
+export var chroma_chalk_code: String = ""
+export var chroma_chalk_name: String = ""
 
 var mouse1_is_held := false
 var alt_is_held := false
@@ -127,12 +140,21 @@ var temp_chalk_canvas_id := -1
 var temp_chalk_tiles := []
 
 
+func _debug(msg, data = null):
+	if not main.DEBUG:
+		return
+	print("[CHALK++]: %s" % msg)
+	if data != null:
+		print(JSON.print(data, "\t"))
+
+
 func _ready():
 	main.connect("cycle_chalk_mode", self, "cycle_chalk_mode")
 	Players.connect("ingame", self, "_on_ingame")
 	Players.connect("outgame", self, "_on_outgame")
 	self.set_process_unhandled_input(true)
 	should_use_eraser_as_chalk = main.config["useEraserAsChalk"]
+
 
 
 func _input(event: InputEvent):
@@ -208,6 +230,13 @@ func _on_outgame() -> void:
 	# Just in case?
 	last_pressure_reading = 0.0
 	pen_is_connected = false
+
+
+func _process(__) -> void:
+	if Lure != null and ChromaChalk != null:
+		chroma_chalk_tile = CC_API.get_chalk_color()
+		chroma_chalk_code = CC_API.get_string_by_id(chroma_chalk_tile)
+		chroma_chalk_name = main.color_db.find_name_for_color(chroma_chalk_code)
 
 
 func _physics_process(__: float) -> void:
@@ -363,15 +392,24 @@ func cycle_mask(forward: bool = true):
 
 func set_mask_color(color: int = COLORS.NONE) -> void:
 	var selection = masks.find(color)
+	if selection == -1:
+		if ChromaChalk != null:
+			mask_selection = selection
+			masking_color = color
+
+			# Might need to set chalk color too later
+			# CC_API.set_chalk_color(color)
+
+			# chroma_chalk_code = CC_API.get_string_by_id(chroma_chalk_tile)
+			# chroma_chalk_name = main.color_db.find_name_for_color(chroma_chalk_code)
+			# _debug("Now using %s as mask" % chroma_chalk_name)
+			chroma_chalk_tile = color
+			emit_signal("changed_mask", mask_selection)
+			return
+		else:
+			breakpoint
 	set_mask(selection)
 
-
-func _debug(msg, data = null):
-	if not main.DEBUG:
-		return
-	print("[CHALK++]: %s" % msg)
-	if data != null:
-		print(JSON.print(data, "\t"))
 
 
 func set_mask(selection: int) -> void:
@@ -841,7 +879,6 @@ func _set_spawn_prop_visibility(visible: bool) -> void:
 	for bench_num in [2, 3, 4]:
 		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
 		if bench == null:
-			Chat.notify("[CHALK++] Where the fuck is the bench %s???" % bench_num)
 			return
 		var bench_children = bench.get_children()
 		var bench_body = bench.get_child(1)

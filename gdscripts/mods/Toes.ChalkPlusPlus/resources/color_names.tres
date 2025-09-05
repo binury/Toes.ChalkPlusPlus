@@ -1,0 +1,7 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://mods/Toes.ChalkPlusPlus/resources/Color_DB.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+csv_path = "res://mods/Toes.ChalkPlusPlus/resources/colornames.csv"
