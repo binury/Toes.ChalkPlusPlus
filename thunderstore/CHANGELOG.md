@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.2.0
+
+- New hotkey `<Ctrl> + Y`: Quickly toggle on/off Chalk++
+  - Useful for hopping back and forth between one mode and regular chalk drawing
+rather than needing to cycle around or pick fro the dropdown.
+
+- ![Removed bench](https://i.imgur.com/qVby4Sb.png)
+  - Added workaround for Calico mod compatibility
+    - This is applied automatically if obstruction hiding is enabled and Calico is detected
+  - Added setting for bench/tree hiding feature `hideCanvasObstructions`
+  - Changed obstruction hiding to always hide instead of only when Chalk++ active
+    - This behavior can be changed with the `alwaysHideObstructions` setting
+
 ## v2.1 - Line tool
 
 - New line tool! Check it out!
