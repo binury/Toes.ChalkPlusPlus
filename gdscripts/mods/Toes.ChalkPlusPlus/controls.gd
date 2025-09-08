@@ -256,7 +256,7 @@ func _physics_process(__: float) -> void:
 	activate_cpp(
 		(
 			current_mode != MODES.NONE
-			and (held_chalk_color == null or (held_chalk_color > -1 or should_use_eraser_as_chalk))
+			and (held_chalk_color != null and (held_chalk_color > -1 or should_use_eraser_as_chalk))
 		)
 	)
 	var cpp_active = chalk_canvas_node.paused

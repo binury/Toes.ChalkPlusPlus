@@ -12,6 +12,9 @@
 
 extends Node
 
+signal cycle_chalk_mode
+signal eraser_button_press
+
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Hotkeys = get_node("/root/ToesSocks/Hotkeys")
 onready var TackleBox = get_node("/root/TackleBox")
@@ -35,8 +38,7 @@ var config := {}
 
 var DEBUG := OS.has_feature("editor") and false
 
-signal cycle_chalk_mode
-signal eraser_button_press
+var last_used_mode: int = 0
 
 
 func _ready():
@@ -48,6 +50,16 @@ func _ready():
 
 func _cycle_pattern(forward):
 	emit_signal("cycle_chalk_mode", forward)
+
+
+func _toggle_on_cpp():
+	print("TOGGLING ON")
+	if last_used_mode == ChalkPP.MODES.NONE:
+		last_used_mode = ChalkPP.current_mode
+		ChalkPP.set_mode(ChalkPP.MODES.NONE)
+	else:
+		ChalkPP.set_mode(last_used_mode)
+		last_used_mode = ChalkPP.MODES.NONE
 
 
 func _activate_eraser():
@@ -96,6 +108,13 @@ func init_keybind() -> void:
 		"modifiers": ["shift"],
 		"repeat": true,
 	}), self, "_cycle_pattern", [false])
+	Hotkeys.connect(Hotkeys.add({
+		"name": "toggle_on_chalk++",
+		"label": "Toggle On/Off Chalk++",
+		"key_code": config.modeSelectKey,
+		"modifiers": ["control"],
+		"repeat": false,
+	}), self, "_toggle_on_cpp", [])
 	Hotkeys.connect(Hotkeys.add({
 		"name": "cpp_erase",
 		"label": "Chalk++ Eraser Button",

@@ -17,6 +17,7 @@
 - Equip any chalk to start using Chalk++.
 - Press `Y` to bring up the overlay UI and again to cycle modes forward.
   - Press `<Shift> + Y` to cycle _backwards_.
+  - Press `<Ctrl>` + `Y` to toggle Chalk++ on/off
 - Press on the Chalk++ button in the overlay to select a mode.
 - Press on the palette button in the overlay to select a color mask.
 
