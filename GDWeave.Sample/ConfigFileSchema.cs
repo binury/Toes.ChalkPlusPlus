@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace ChalkPlusPlus;
 
 /// <summary>
@@ -15,8 +13,6 @@ namespace ChalkPlusPlus;
 /// </summary>
 public class ConfigFileSchema
 {
-	[JsonInclude]
-	public bool instantFill = false;
-	[JsonInclude]
-	public int modeSelectKey = 89;
+    // Unused
 }
+

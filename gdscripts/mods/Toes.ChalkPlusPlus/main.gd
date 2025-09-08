@@ -15,6 +15,7 @@ extends Node
 signal cycle_chalk_mode
 signal eraser_button_press
 
+onready var Chat = get_node("/root/ToesSocks/Chat")
 onready var Players = get_node("/root/ToesSocks/Players")
 onready var Hotkeys = get_node("/root/ToesSocks/Hotkeys")
 onready var TackleBox = get_node("/root/TackleBox")
@@ -45,6 +46,7 @@ var last_used_mode: int = 0
 
 func _ready():
 	init_config()
+	save_config()
 	init_keybind()
 
 	# Mod conflict resolution
@@ -55,6 +57,7 @@ func _ready():
 			TackleBox.set_mod_config("Teemaw.Calico", calico_config)
 
 	Players.connect("ingame", self, "_on_ingame")
+	TackleBox.connect("mod_config_updated", self, "_config_updated")
 
 
 func _cycle_pattern(forward):
@@ -87,15 +90,20 @@ func _on_ingame():
 	get_tree().root.add_child(ChalkPP_UI, true)
 
 
+func _config_updated(id: String, new_config: Dictionary):
+	if id == MOD_ID:
+		Chat.write("[color=blue]Chalk++ Settings Reloaded ✅[/color]")
+		_init_config()
+
 func init_config() -> void:
 	var saved_config = TackleBox.get_mod_config(MOD_ID)
 	if not saved_config:
 		saved_config = default_config.duplicate()
 	for key in default_config.keys():
 		if not saved_config.has(key):
+			print("[CHALK++] Using defaulted option %s : %s" % [key, default_config[key]])
 			saved_config[key] = default_config[key]
 	config = saved_config
-	save_config()
 
 
 func save_config() -> void:

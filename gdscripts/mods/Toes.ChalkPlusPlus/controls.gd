@@ -35,11 +35,6 @@ const MODE_NAMES = {
 	MODES.LINE: "Line Tool",
 	MODES.MIRROR: "Symmetrical Mirroring",
 }
-
-## Drawing stylus
-var pen_is_connected := false
-var last_pressure_reading := 0.0
-
 var local_player: Node
 var paint_node: Spatial
 
@@ -126,6 +121,13 @@ var temp_chalk_canvas_id := -1
 ## Preview tiles history, for undoing
 var temp_chalk_tiles := []
 
+## Drawing stylus
+var pen_is_connected := false
+var last_pressure_reading := 0.0
+
+## Whether obstructions need to be hidden
+var _props_were_hidden := false
+
 
 func _ready():
 	main.connect("cycle_chalk_mode", self, "cycle_chalk_mode")
@@ -188,8 +190,6 @@ func _on_ingame() -> void:
 	randomize()
 	get_canvasses()
 
-	if main.config.get("alwaysHideObstructions"):
-		_set_spawn_prop_visibility(false)
 
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	var audio = _get_random_sound()
@@ -205,9 +205,23 @@ func _on_outgame() -> void:
 	set_mode(MODES.NONE)
 	set_mask_color(COLORS.NONE)
 
+	self._props_were_hidden = false
 	# Just in case?
 	last_pressure_reading = 0.0
 	pen_is_connected = false
+
+
+func _process(__):
+	if main.config.get("hideCanvasObstructions"):
+		var always_hide_obstructions = main.config.get("alwaysHideObstructions", false)
+		var should_show_props = self._props_were_hidden and (current_mode == MODES.NONE and not always_hide_obstructions) 
+		var should_hide_props = (always_hide_obstructions or current_mode != MODES.NONE) and not self._props_were_hidden
+
+		if should_show_props:
+			_set_spawn_prop_visibility(true)
+		elif should_hide_props:
+			_set_spawn_prop_visibility(false)
+
 
 
 func _physics_process(__: float) -> void:
@@ -319,8 +333,7 @@ func activate_cpp(active: bool) -> void:
 		var mi_mat: SpatialMaterial = mi["material/0"]
 		mi_mat["flags_albedo_tex_force_srgb"] = main.config.get("useFixedChalkTextures", false)
 		mi_mat["flags_unshaded"] = main.config.get("glowInTheDarkChalk", true)
-	if not main.config.get("alwaysHideObstructions"):
-		_set_spawn_prop_visibility(!active)
+
 
 
 func get_held_chalk() -> String:
@@ -823,26 +836,23 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 	)
 
 
-func _set_spawn_prop_visibility(visible: bool) -> void:
-	if not main.config.get("hideCanvasObstructions"):
-		return
-	if chalk_canvas_id != 0 or chalk_canvas_node == null:
-		return
+func _set_spawn_prop_visibility(visible: bool) -> bool:
 	var scene = get_tree().current_scene
 	var big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/tree_a/big_tree")
 	if big_tree == null:
-		return
+		return false
 	big_tree.visible = visible
 	var big_tree_collision = big_tree.get_child(1).get_child(0)
 	big_tree_collision.disabled = !visible
 	for bench_num in [2, 3, 4]:
 		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
 		if bench == null:
-			return
+			return false
 		var bench_children = bench.get_children()
 		var bench_body = bench.get_child(1)
 		bench_body.visible = visible
 		for collision in bench_body.get_children():
 			collision.disabled = !visible
 		bench.visible = visible
-	return
+	self._props_were_hidden = !visible
+	return true

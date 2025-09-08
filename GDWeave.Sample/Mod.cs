@@ -1,4 +1,4 @@
-﻿using GDWeave;
+using GDWeave;
 using util.LexicalTransformer;
 
 namespace ChalkPlusPlus;
@@ -12,7 +12,7 @@ public class Mod : IMod
 {
 	public Mod(IModInterface mi)
 	{
-		var config = new Config(mi.ReadConfig<ConfigFileSchema>());
+		// var config = new Config(mi.ReadConfig<ConfigFileSchema>());
 
 		mi.RegisterScriptMod(
 			new TransformationRuleScriptModBuilder()

@@ -4,7 +4,7 @@
 
 - New hotkey `<Ctrl> + Y`: Quickly toggle on/off Chalk++
   - Useful for hopping back and forth between one mode and regular chalk drawing
-rather than needing to cycle around or pick fro the dropdown.
+rather than needing to cycle around or pick from the dropdown.
 
 - ![Removed bench](https://i.imgur.com/qVby4Sb.png)
   - Added workaround for Calico mod compatibility

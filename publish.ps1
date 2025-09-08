@@ -20,9 +20,9 @@ $manifest = Get-Content $ThunderstoreManifestPath | ConvertFrom-Json
 $manifest.version_number = $version
 $manifest | ConvertTo-Json -Depth 1 | Set-Content $ThunderstoreManifestPath
 
-cp ".\gdscripts\Chalk++.pck" ".\thunderstore\GDWeave\mods"
-cp ".\GDWeave.Sample\bin\Release\net8.0\Chalk++.dll" ".\thunderstore\GDWeave\mods"
-cp ".\GDWeave.Sample\bin\Release\net8.0\manifest.json" ".\thunderstore\GDWeave\mods"
+Move-Item ".\gdscripts\Chalk++.pck" ".\thunderstore\GDWeave\mods"
+Move-Item ".\GDWeave.Sample\bin\Release\net8.0\Chalk++.dll" ".\thunderstore\GDWeave\mods"
+Move-Item ".\GDWeave.Sample\bin\Release\net8.0\manifest.json" ".\thunderstore\GDWeave\mods"
 
 
 # Zip it up
