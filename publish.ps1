@@ -23,7 +23,6 @@ $manifest | ConvertTo-Json -Depth 1 | Set-Content $ThunderstoreManifestPath
 cp ".\gdscripts\Chalk++.pck" ".\thunderstore\GDWeave\mods"
 cp ".\GDWeave.Sample\bin\Release\net8.0\Chalk++.dll" ".\thunderstore\GDWeave\mods"
 cp ".\GDWeave.Sample\bin\Release\net8.0\manifest.json" ".\thunderstore\GDWeave\mods"
-cp ".\LICENSE" ".\thunderstore"
 
 
 # Zip it up
