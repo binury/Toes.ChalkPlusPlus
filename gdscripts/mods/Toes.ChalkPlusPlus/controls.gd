@@ -125,7 +125,8 @@ var temp_chalk_tiles := []
 var pen_is_connected := false
 var last_pressure_reading := 0.0
 
-## Whether obstructions need to be hidden
+## Whether obstructions are hidden
+## (Unused)
 var _props_were_hidden := false
 
 
@@ -214,8 +215,8 @@ func _on_outgame() -> void:
 func _process(__):
 	if main.config.get("hideCanvasObstructions"):
 		var always_hide_obstructions = main.config.get("alwaysHideObstructions", false)
-		var should_show_props = self._props_were_hidden and (current_mode == MODES.NONE and not always_hide_obstructions) 
-		var should_hide_props = (always_hide_obstructions or current_mode != MODES.NONE) and not self._props_were_hidden
+		var should_show_props = (current_mode == MODES.NONE and not always_hide_obstructions) 
+		var should_hide_props = (always_hide_obstructions or current_mode != MODES.NONE)
 
 		if should_show_props:
 			_set_spawn_prop_visibility(true)
@@ -841,6 +842,10 @@ func _set_spawn_prop_visibility(visible: bool) -> bool:
 	var big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/tree_a/big_tree")
 	if big_tree == null:
 		return false
+	if big_tree.visible == visible:
+		# Early return to skip already-completed work
+		# Assumes visibility is already set as directed
+		return true
 	big_tree.visible = visible
 	var big_tree_collision = big_tree.get_child(1).get_child(0)
 	big_tree_collision.disabled = !visible
