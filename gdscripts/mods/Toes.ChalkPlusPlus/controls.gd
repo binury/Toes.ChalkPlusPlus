@@ -841,7 +841,6 @@ func _set_spawn_prop_visibility(visible: bool) -> void:
 	for bench_num in [2, 3, 4]:
 		var bench = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/props/bench" + str(bench_num))
 		if bench == null:
-			Chat.notify("[CHALK++] Where the fuck is the bench %s???" % bench_num)
 			return
 		var bench_children = bench.get_children()
 		var bench_body = bench.get_child(1)
