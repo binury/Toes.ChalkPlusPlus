@@ -187,9 +187,9 @@ func vec2_has_inf(v: Vector2) -> bool:
 func _on_ingame() -> void:
 	randomize()
 	get_canvasses()
-	# UI = get_node("/root/Chalk++ UI")
-	# UI.connect("scrolled_up", self, "cycle_chalk_mode", [false])
-	# UI.connect("scrolled_down", self, "cycle_chalk_mode", [true])
+
+	if main.config.get("alwaysHideObstructions"):
+		_set_spawn_prop_visibility(false)
 
 	var paint: Spatial = Players.local_player.get_node("paint_node")
 	var audio = _get_random_sound()
@@ -319,7 +319,8 @@ func activate_cpp(active: bool) -> void:
 		var mi_mat: SpatialMaterial = mi["material/0"]
 		mi_mat["flags_albedo_tex_force_srgb"] = main.config.get("useFixedChalkTextures", false)
 		mi_mat["flags_unshaded"] = main.config.get("glowInTheDarkChalk", true)
-	_set_spawn_prop_visibility(!active)
+	if not main.config.get("alwaysHideObstructions"):
+		_set_spawn_prop_visibility(!active)
 
 
 func get_held_chalk() -> String:
@@ -822,18 +823,14 @@ func _update_canvas_node(transformations: Array, canvasActorID: int):
 	)
 
 
-# TODO: Mod conflicts with Calico/Awwptomize?
 func _set_spawn_prop_visibility(visible: bool) -> void:
+	if not main.config.get("hideCanvasObstructions"):
+		return
 	if chalk_canvas_id != 0 or chalk_canvas_node == null:
 		return
 	var scene = get_tree().current_scene
 	var big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/tree_a/big_tree")
-#	if big_tree == null:
-#		big_tree = scene.get_node_or_null("Viewport/main/map/main_map/zones/main_zone/trees/@@1698")
 	if big_tree == null:
-		# TODO
-		# This will happen due sometimes due to Calico if config.MeshGpuInstancingEnabled = true
-		# https://github.com/tma02/calico/blob/46f46722d3bdcf7f8f5da96861894e9abcefc766/Teemaw.Calico/ScriptMod/MainMapScriptModFactory.cs#L31
 		return
 	big_tree.visible = visible
 	var big_tree_collision = big_tree.get_child(1).get_child(0)
@@ -844,8 +841,6 @@ func _set_spawn_prop_visibility(visible: bool) -> void:
 			return
 		var bench_children = bench.get_children()
 		var bench_body = bench.get_child(1)
-#		if bench_body == null:
-#			bench_body = bench.get_child(0)
 		bench_body.visible = visible
 		for collision in bench_body.get_children():
 			collision.disabled = !visible

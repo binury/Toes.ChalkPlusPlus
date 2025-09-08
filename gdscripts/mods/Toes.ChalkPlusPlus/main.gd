@@ -33,6 +33,8 @@ var default_config := {
 	"drawingSounds": true,
 	"useFixedChalkTextures": true,
 	"glowInTheDarkChalk": true,
+	"hideCanvasObstructions": true,
+	"alwaysHideObstructions": true,
 }
 var config := {}
 
@@ -44,6 +46,13 @@ var last_used_mode: int = 0
 func _ready():
 	init_config()
 	init_keybind()
+
+	# Mod conflict resolution
+	var calico_config = TackleBox.get_mod_config("Teemaw.Calico")
+	if calico_config != null and calico_config.get("MeshGpuInstancingEnabled", false):
+		if config.get("hideCanvasObstructions"):
+			calico_config["MeshGpuInstancingEnabled"] = false
+			TackleBox.set_mod_config("Teemaw.Calico", calico_config)
 
 	Players.connect("ingame", self, "_on_ingame")
 

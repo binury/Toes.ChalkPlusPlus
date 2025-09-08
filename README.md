@@ -85,15 +85,6 @@ Press and drag to show a line preview. Release to set your line.
 Press `E` (configurable in settings) to erase without equipping the eraser.
 **Mode effects (mirror, brush patterns, etc.) will apply to the eraser pattern!**
 
-### When active, benches and trees on canvases become invisible and intangible
-
-![Removed bench](https://i.imgur.com/qVby4Sb.png)
-
-_If_ you are _using Calico_, you will need to [change a setting](https://github.com/binury/Toes.ChalkPlusPlus/issues/7) for this to work!!! (For now)
-
-> [!TIP]
-> Hold `<Shift>` while drawing to offset the grid
-
 ---
 
 ## ⚙️ Options
@@ -101,25 +92,35 @@ _If_ you are _using Calico_, you will need to [change a setting](https://github.
 Options can be changed in-game via `Settings > Mods > Chalk++`,  
 or by editing `GDWeave/configs/Toes.ChalkPlusPlus.json`.
 
-1. `useEraserAsChalk` (default: `true`)
-   - `true`: Eraser behaves identical to a “brown chalk” with Chalk++ brush features.
-   - `false`: Use eraser normally while in any mode.
-2. `drawingSounds` (default: `true`)
-   - Hear immersive sound effects while drawing.
+- `useEraserAsChalk` (default: `true`)
+  - `true`: Eraser behaves identical to a “brown chalk” with Chalk++ brush features.
+  - `false`: Use eraser normally while in any mode.
+- `drawingSounds` (default: `true`)
+  - Hear immersive sound effects while drawing.
 
 <img src="https://i.imgur.com/cxETH3c.png">
 <br/>
 
-3. `useFixedChalkTextures` (default: `true`)
-   - Restores the original RGB color palette texture to canvasses
-   - Fixes a bug in the canvas tile's material/texture that causes it to _normally_ appear over-saturated (e.g., red looks magenta)
+- `useFixedChalkTextures` (default: `true`)
+  - Restores the original RGB color palette texture to canvasses
+  - Fixes a bug in the canvas tile's material/texture that causes it to _normally_ appear over-saturated (e.g., red looks magenta)
 
 <img src="https://i.imgur.com/sj9jlJt.png" width="650">
 <br/>
 
-4. `glowInTheDarkChalk` (default: `true`)
-   - Changes chalk to be unaffected by lighting/shadows
-   - Primarily for usage with daytime lighting changing mods such as [Daylight](https://thunderstore.io/c/webfishing/p/baltdev/Daylight/)
+- `glowInTheDarkChalk` (default: `true`)
+
+  - Changes chalk to be unaffected by lighting/shadows
+  - Primarily for usage with daytime lighting changing mods such as [Daylight](https://thunderstore.io/c/webfishing/p/baltdev/Daylight/)
+
+![Removed bench](https://i.imgur.com/qVby4Sb.png)
+
+- `hideCanvasObstructions` (default: `true`)
+  - Benches and trees on canvases become invisible and intangible while using Chalk++
+
+- `alwaysHideObstructions` (default: `true`)
+  - `true`: Never show benches/trees on canvas
+  - `false`: Hide canvas obstructions _**only when Chalk++ is active**_
 
 ---
 
