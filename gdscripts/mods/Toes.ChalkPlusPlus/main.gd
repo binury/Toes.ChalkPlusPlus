@@ -93,7 +93,7 @@ func _on_ingame():
 func _config_updated(id: String, new_config: Dictionary):
 	if id == MOD_ID:
 		Chat.write("[color=blue]Chalk++ Settings Reloaded ✅[/color]")
-		_init_config()
+		init_config()
 
 func init_config() -> void:
 	var saved_config = TackleBox.get_mod_config(MOD_ID)
