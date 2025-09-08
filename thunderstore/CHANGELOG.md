@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.1
+
+- Fixed (long-standing) issue causing some mod settings to always default and not persist when changed
+
 ## v2.2.0
 
 - New hotkey `<Ctrl> + Y`: Quickly toggle on/off Chalk++

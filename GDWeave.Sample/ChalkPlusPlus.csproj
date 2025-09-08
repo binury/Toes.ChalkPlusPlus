@@ -6,15 +6,15 @@
     <Nullable>enable</Nullable>
     <AssemblySearchPaths>$(AssemblySearchPaths);$(GDWeavePath)/core;C:/Program Files (x86)/Steam/steamapps/common/WEBFISHING/GDWeave/core</AssemblySearchPaths>
     <AssemblyName>Chalk++</AssemblyName>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <Authors>Toes</Authors>
     <Company>Toes d/b/a Fuck Off PP Inc.</Company>
     <ApplicationIcon>../assets/favicon.ico</ApplicationIcon>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <IncludeSymbols>False</IncludeSymbols>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
+    <AssemblyVersion>2.2.1</AssemblyVersion>
+    <FileVersion>2.2.1</FileVersion>
     <Copyright>Copyright (c) 2025 binury</Copyright>
     <PackageProjectUrl>https://github.com/binury/Toes.ChalkPlusPlus</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
