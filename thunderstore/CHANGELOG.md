@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.3.0
+
+- Equip animations when switching between chalks are now instantaneous!
+- Added safeguards to prevent crash when lobby closes unexpectedly or player is kicked
+
 ## v2.2.1
 
 - Fixed (long-standing) issue causing some mod settings to always default and not persist when changed
