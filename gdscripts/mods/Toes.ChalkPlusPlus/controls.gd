@@ -139,6 +139,8 @@ func _ready():
 
 
 func _input(event: InputEvent):
+	if !Players.in_game: return
+	
 	if event is InputEventKey:
 		match event.scancode:
 			KEY_SHIFT:
@@ -170,6 +172,8 @@ func _input(event: InputEvent):
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if !Players.in_game: return
+	
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT:
 			mouse1_is_held = event.is_pressed()
@@ -213,6 +217,7 @@ func _on_outgame() -> void:
 
 
 func _process(__):
+	if !Players.in_game: return
 	if main.config.get("hideCanvasObstructions"):
 		var always_hide_obstructions = main.config.get("alwaysHideObstructions", false)
 		var should_show_props = (current_mode == MODES.NONE and not always_hide_obstructions) 

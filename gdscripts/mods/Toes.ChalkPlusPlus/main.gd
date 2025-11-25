@@ -38,7 +38,7 @@ var default_config := {
 	"alwaysHideObstructions": true,
 }
 var config := {}
-
+	
 var DEBUG := OS.has_feature("editor") and false
 
 var last_used_mode: int = 0
