@@ -72,6 +72,32 @@ public class Mod : IMod
 				)
 				.Build()
 		);
+
+		mi.RegisterScriptMod(
+			new TransformationRuleScriptModBuilder()
+				.ForMod(mi)
+				.Named("Chalk++ Chalk Equip No-Animation Patch")
+				.Patching("res://Scenes/Entities/Player/player.gdc")
+				.AddRule(
+					new TransformationRuleBuilder()
+						.Named("Skip animation if holding chalk")
+						.Do(Operation.Append)
+						.Matching(
+							TransformationPatternFactory.CreateGdSnippetPattern(
+								"""PlayerData.emit_signal("_item_equip", item_data["ref"])"""
+							)
+						)
+						.With(
+							"""
+
+							if "chalk_" in item_data["id"]: skip_anim = true
+
+							""",
+							1
+						)
+				)
+				.Build()
+		);
 	}
 
 	public void Dispose()
