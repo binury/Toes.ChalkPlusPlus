@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.999.0 - V3 pre-release
+
+- Added support for custom chalk color mods
+  - Modded chalk items should be automatically detected and used just like regular chalk items
+  - This is a general compatibility not full integration, yet.
+  - When using a custom color as a mask it will display as "special" due to not knowing the name (or RGB color values) of the custom color
+
 ## v2.3.0
 
 - Equip animations when switching between chalks are now instantaneous!
