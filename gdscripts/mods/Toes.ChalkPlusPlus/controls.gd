@@ -407,9 +407,9 @@ func set_mask(selection: int) -> void:
 	mask_selection = selection
 	# masking_color = masks[mask_selection]
 	if masking_color in mask_names:
-	var mask_name = mask_names[masking_color]
-	emit_signal("changed_mask", mask_selection)
-	_notify("Now using " + mask_name + " mask")
+		var mask_name = mask_names[masking_color]
+		emit_signal("changed_mask", mask_selection)
+		_notify("Now using " + mask_name + " mask")
 	else:
 		emit_signal("changed_mask", 7) # TODO: this is a hack
 
