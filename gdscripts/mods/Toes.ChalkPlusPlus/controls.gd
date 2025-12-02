@@ -344,12 +344,15 @@ func activate_cpp(active: bool) -> void:
 
 func get_held_chalk() -> String:
 	var held_item = local_player.held_item["id"]
-	return held_item if held_item in CHALK_ITEMS.keys() else null
+	return held_item if "chalk" in held_item.to_lower() else null
 
 
-func get_held_chalk_color() -> String:
+func get_held_chalk_color():
 	var chalk := get_held_chalk()
-	return CHALK_ITEMS[chalk] if chalk != null else null
+	if not chalk: return null
+	var item = Globals.item_data[chalk]["file"]
+	var color = item["action_params"][1]
+	return color
 
 
 func cycle_chalk_mode(forward = true) -> void:
@@ -383,6 +386,7 @@ func cycle_mask(forward: bool = true):
 
 func set_mask_color(color: int = COLORS.NONE) -> void:
 	var selection = masks.find(color)
+	masking_color = color
 	set_mask(selection)
 
 
@@ -401,10 +405,13 @@ func set_mask(selection: int) -> void:
 		return
 	_debug("Setting new mask", selection)
 	mask_selection = selection
-	masking_color = masks[mask_selection]
+	# masking_color = masks[mask_selection]
+	if masking_color in mask_names:
 	var mask_name = mask_names[masking_color]
 	emit_signal("changed_mask", mask_selection)
 	_notify("Now using " + mask_name + " mask")
+	else:
+		emit_signal("changed_mask", 7) # TODO: this is a hack
 
 
 func find_canvas_id(pos: Vector3) -> int:
@@ -531,7 +538,7 @@ func apply_chalkpp():
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
 
-	if get_held_chalk_color() == null:
+	if not get_held_chalk_color():
 		return
 	elif mouse1_is_held:
 		var cell = data[0]
