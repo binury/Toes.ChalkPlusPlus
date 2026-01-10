@@ -94,7 +94,7 @@ const mask_names := {
 ## Index of color
 var mask_selection := 0
 ## Masking color / chalk canvas value
-var masking_color: int = COLORS.NONE
+var _masking_color: int = COLORS.NONE
 
 var current_mode: int = MODES.NONE
 
@@ -105,6 +105,8 @@ var shift_is_held := false
 
 var last_hover_pos := Vector2.INF
 var last_hover_color := INF
+## Last non-eraser chalk color used
+var last_drawn_color := -1
 
 ## Shortcut is held
 var eraser_shortcut_requested := false
@@ -355,6 +357,13 @@ func get_held_chalk_color():
 	return color
 
 
+func get_masking_color() -> int:
+	## If player was just drawing with a default alpha mask and has switched to an eraser
+	if (eraser_shortcut_active or get_held_chalk_color() == -1) and _masking_color == -1:
+		return last_drawn_color
+	return _masking_color
+
+
 func cycle_chalk_mode(forward = true) -> void:
 	if Players.is_busy():
 		return
@@ -386,7 +395,7 @@ func cycle_mask(forward: bool = true):
 
 func set_mask_color(color: int = COLORS.NONE) -> void:
 	var selection = masks.find(color)
-	masking_color = color
+	_masking_color = color
 	set_mask(selection)
 
 
@@ -406,8 +415,8 @@ func set_mask(selection: int) -> void:
 	_debug("Setting new mask", selection)
 	mask_selection = selection
 	# masking_color = masks[mask_selection]
-	if masking_color in mask_names:
-		var mask_name = mask_names[masking_color]
+	if _masking_color in mask_names:
+		var mask_name = mask_names[_masking_color]
 		emit_signal("changed_mask", mask_selection)
 		_notify("Now using " + mask_name + " mask")
 	else:
@@ -548,6 +557,9 @@ func apply_chalkpp():
 			var current_cell_color = TileMap_node.get_cell(cell[0], cell[1])
 			set_mask_color(current_cell_color)
 			return
+		
+		if get_held_chalk_color() > -1:
+			last_drawn_color = get_held_chalk_color()
 
 		match current_mode:
 			MODES.DITHER_DOT:
@@ -603,7 +615,7 @@ func checkerboard_brush(transformations, offset = shift_is_held):
 		var y = entry[1]
 		if control_is_held:
 			var current_cell_color = TileMap_node.get_cell(x, y)
-			if current_cell_color != masking_color:
+			if current_cell_color != get_masking_color():
 				continue
 		if ((x + y) + (1 if offset else 0)) % 2 == 0:
 			result.append(entry)
@@ -618,7 +630,7 @@ func dotting_brush(transformations):
 		var color = entry[2]
 		if control_is_held:
 			var current_cell_color = TileMap_node.get_cell(x, y)
-			if current_cell_color != masking_color:
+			if current_cell_color != get_masking_color():
 				continue
 		if x % 2 == 0 or y % 2 == 0:
 			continue
@@ -632,7 +644,7 @@ func masking_tool(data: Array) -> Array:
 		var x = node[0]
 		var y = node[1]
 		var current_cell_color = TileMap_node.get_cell(x, y)
-		if current_cell_color != masking_color:
+		if current_cell_color != get_masking_color():
 			continue
 		result.append(node)
 	return result
@@ -753,7 +765,7 @@ func draw_line(transformations: Array) -> Array:
 		# Masking
 		if control_is_held and not shift_is_held:
 			var current_cell_color = TileMap_node.get_cell(x0, y0)
-			if current_cell_color == masking_color:
+			if current_cell_color == get_masking_color():
 				result.append([x0, y0, color])
 		else:
 			result.append([x0, y0, color])
@@ -784,7 +796,7 @@ func mirror_tool(transformations: Array) -> Array:
 			var ty = t1[1]
 			# Only masking t1. t2 applied no matter what
 			var current_cell_color = TileMap_node.get_cell(tx, ty)
-			if current_cell_color != masking_color:
+			if current_cell_color != get_masking_color():
 				continue
 
 		result.append(t1)

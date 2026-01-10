@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.999.1 - Alpha masking eraser QOL change, Mini canvas fix
+
+- After switching to `Eraser` _while freehand masking with alpha mask_,
+the eraser will **now automatically ignore your (alpha) mask and instead
+allow you to erase whatever chalk you were drawing with last**.
+This will not take affect in other circumstances and you can still use eraser as chalk normally.
+This is meant to solve some bad UX where in order to erase a player had to set their mask to whatever needed erasing, every time, and then back to alpha masking. Consider: it doesn't ever make sense to mask an eraser using erased cells. They're already erased.
+But you took the eraser out for a reason surely. This patch acknowledges and addresses this situation.
+**tl;dr: erasing while freehand masking will now be much better / less tedious**
+- The issues preventing using Chalk++ on the mini canvas (outside Aquarium) have been resolved (#11)
+
 ## v2.999.0 - V3 pre-release
 
 - Added support for custom chalk color mods
