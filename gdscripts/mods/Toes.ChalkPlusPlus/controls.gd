@@ -547,7 +547,7 @@ func apply_chalkpp():
 		emit_signal("applied_drawing")
 		eraser_shortcut_active = false
 
-	if not get_held_chalk_color():
+	if get_held_chalk_color() == null:
 		return
 	elif mouse1_is_held:
 		var cell = data[0]
