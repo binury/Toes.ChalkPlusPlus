@@ -1,14 +1,14 @@
 # Changelog
 
-## v2.999.1 - Alpha masking eraser QOL change, Mini canvas fix
+## v2.999.5 - Alpha masking eraser QOL change, Mini canvas fix
 
 - After switching to `Eraser` _while freehand masking with alpha mask_,
-the eraser will **now automatically ignore your (alpha) mask and instead
-allow you to erase whatever chalk you were drawing with last**.
-This will not take affect in other circumstances and you can still use eraser as chalk normally.
-This is meant to solve some bad UX where in order to erase a player had to set their mask to whatever needed erasing, every time, and then back to alpha masking. Consider: it doesn't ever make sense to mask an eraser using erased cells. They're already erased.
-But you took the eraser out for a reason surely. This patch acknowledges and addresses this situation.
-**tl;dr: erasing while freehand masking will now be much better / less tedious**
+  the eraser will **now automatically ignore your (alpha) mask and instead
+  allow you to erase whatever chalk you were drawing with last**.
+  This will not take affect in other circumstances and you can still use eraser as chalk normally.
+  This is meant to solve some bad UX where in order to erase a player had to set their mask to whatever needed erasing, every time, and then back to alpha masking. Consider: it doesn't ever make sense to mask an eraser using erased cells. They're already erased.
+  But you took the eraser out for a reason surely. This patch acknowledges and addresses this situation.
+  **tl;dr: erasing while freehand masking will now be much better / less tedious**
 - The issues preventing using Chalk++ on the mini canvas (outside Aquarium) have been resolved (#11)
 
 ## v2.999.0 - V3 pre-release
@@ -30,8 +30,9 @@ But you took the eraser out for a reason surely. This patch acknowledges and add
 ## v2.2.0
 
 - New hotkey `<Ctrl> + Y`: Quickly toggle on/off Chalk++
+
   - Useful for hopping back and forth between one mode and regular chalk drawing
-rather than needing to cycle around or pick from the dropdown.
+    rather than needing to cycle around or pick from the dropdown.
 
 - ![Removed bench](https://i.imgur.com/qVby4Sb.png)
   - Added workaround for Calico mod compatibility
