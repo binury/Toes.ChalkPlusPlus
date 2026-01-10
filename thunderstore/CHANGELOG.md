@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.999.6
+
+- Hotfixed white chalk not working. Sorry!
+
 ## v2.999.5 - Alpha masking eraser QOL change, Mini canvas fix
 
 - After switching to `Eraser` _while freehand masking with alpha mask_,
