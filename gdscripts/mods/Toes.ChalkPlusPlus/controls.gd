@@ -28,8 +28,8 @@ enum MODES { NONE, DITHER_CHECKER, DITHER_DOT, MASK, FILL, LINE, MIRROR }
 const END_OF_MODES_INDEX = MODES.MIRROR
 const MODE_NAMES = {
 	MODES.NONE: "Off",
-	MODES.DITHER_CHECKER: "Checkerboard (Half) Brush",
-	MODES.DITHER_DOT: "Dotting (1/9th) Brush",
+	MODES.DITHER_CHECKER: "Checkerboard (1/2) Brush",
+	MODES.DITHER_DOT: "Dotting (1/9) Brush",
 	MODES.MASK: "Freehand Masking",
 	MODES.FILL: "Bucket Fill",
 	MODES.LINE: "Line Tool",
