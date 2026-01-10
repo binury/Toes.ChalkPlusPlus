@@ -637,14 +637,32 @@ func masking_tool(data: Array) -> Array:
 		result.append(node)
 	return result
 
-
+## Full of edge cases and exceptions but the gist is whether it's inside the visual circle
+## which is not necessarily where the actual grid node is... because LameDev
 func _in_bounds(x: int, y: int) -> bool:
-	var should_use_offset_hack = chalk_canvas_node != chalk_canvasses[0]
-	var width = (chalk_canvas_node.canvas_boundry * 2) + (12 if should_use_offset_hack else 0)
+	## The small canvas
+	var should_use_mini_hack = chalk_canvas_node == chalk_canvasses[1]
+	## The uphill canvasses are not properly algned either
+	var should_use_offset_hack = chalk_canvas_node != chalk_canvasses[0] and not should_use_mini_hack
+	# Yes, in summary, only the main spawn canvas is centered properly
+	
+	# Gross edge case in how I use the canvas_boundry property
+	# to calculate the circle's area, in part due to significant misalignment of texture
+	var width = (100.0 if should_use_mini_hack else chalk_canvas_node.canvas_boundry) * 2
+	# Quick and dirty hack to hide misalignment of map by enlarging circle slightly
+	if should_use_offset_hack: width += 11
+	
 	var height = width
-	var center_x = width / 2.0  # TODO
-	var center_y = height / 2.0  # TODO
-	var radius = width / 2.0
+
+	var center_x = width / 2.0
+	var center_y = height / 2.0
+	var radius = width /  2.0
+	if should_use_mini_hack:
+		# 'Mini' canvas
+		center_x /= 2.0
+		radius /= 2.0
+		# Accounting for significant misalignment; it is NOT centered
+		center_x += 50
 	var radius_sq = radius * radius
 	if x < 0 or x >= width or y < 0 or y >= height:
 		return false
@@ -668,12 +686,6 @@ func paint_bucket(transformations: Array) -> Array:
 	var target_color = TileMap_node.get_cell(start_x, start_y)
 
 	if target_color == new_color:
-		return transformations
-	if chalk_canvasses[1] == chalk_canvas_node:
-		# TODO: Throttle this
-		Chat.notify(
-			"[Chalk++] Due to game limitations outside our control, the fill tool does not currently work on this chalk canvas, sorry!"
-		)
 		return transformations
 
 	var queue = [Vector2(start_x, start_y)]
