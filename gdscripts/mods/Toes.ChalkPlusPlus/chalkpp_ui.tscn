@@ -57,7 +57,7 @@ alignment = 1
 [node name="ModeButton" type="MenuButton" parent="Info/Panel/VBoxContainer/HBoxContainer"]
 margin_left = 8.0
 margin_right = 188.0
-margin_bottom = 39.0
+margin_bottom = 37.0
 rect_min_size = Vector2( 180, 37 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -134,6 +134,7 @@ margin_bottom = 121.0
 rect_min_size = Vector2( 380, 38 )
 size_flags_horizontal = 2
 size_flags_vertical = 3
+theme = ExtResource( 1 )
 bbcode_enabled = true
 bbcode_text = " Masking color: alpha"
 text = " Masking color: alpha"

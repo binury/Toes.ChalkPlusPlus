@@ -123,10 +123,6 @@ var temp_chalk_canvas_id := -1
 ## Preview tiles history, for undoing
 var temp_chalk_tiles := []
 
-## Drawing stylus
-var pen_is_connected := false
-var last_pressure_reading := 0.0
-
 ## Whether obstructions are hidden
 ## (Unused)
 var _props_were_hidden := false
@@ -162,15 +158,6 @@ func _input(event: InputEvent):
 			if Input.is_action_just_released("zoom_out"):
 				local_player.camera_zoom -= 0.5
 			cycle_mask(true)
-
-	elif event is InputEventMouseMotion and main.config["experimentalStylusControls"]:
-		last_pressure_reading = event.pressure
-		if last_pressure_reading > 0.0:
-			if pen_is_connected == false:
-				Chat.notify("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
-				Chat.write("[Chalk++] Detected drawing stylus -- Experimental controls activated!")
-			_debug("last pressure reading %s" % last_pressure_reading)
-			pen_is_connected = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -213,9 +200,6 @@ func _on_outgame() -> void:
 	set_mask_color(COLORS.NONE)
 
 	self._props_were_hidden = false
-	# Just in case?
-	last_pressure_reading = 0.0
-	pen_is_connected = false
 
 
 func _process(__):
